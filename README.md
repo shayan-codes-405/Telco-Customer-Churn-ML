@@ -12,7 +12,15 @@ https://telco-customer-churn-mlgit-jxoyqjrh4fnrwdyps8q9fj.streamlit.app/
 
 ---
 
-## 📌 Project Summary
+## � Repository
+
+Source code and project files are hosted on GitHub:
+
+https://github.com/shayan-codes-405/Telco-Customer-Churn-ML
+
+---
+
+## �📌 Project Summary
 
 This project helps telecom businesses identify customers who are at high risk of leaving the service. By predicting churn early, decision-makers can design retention campaigns, improve customer satisfaction, and preserve revenue.
 
@@ -157,7 +165,7 @@ Telco-Customer-Churn/
 Clone the repository:
 
 ```bash
-git clone https://github.com/shayan-codes-405/Telco-Customer-Churn.git
+git clone https://github.com/shayan-codes-405/Telco-Customer-Churn-ML.git
 ```
 
 Change directory:
@@ -192,7 +200,7 @@ streamlit run app.py
 
 **Shayan**
 
-GitHub: https://github.com/shayan-codes-405
+GitHub repository: https://github.com/shayan-codes-405/Telco-Customer-Churn-ML
 
 ---
 
