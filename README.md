@@ -12,7 +12,7 @@ A Machine Learning web application that predicts whether a telecom customer is l
 ---
 ## 🚀 Live Demo
 
-🔗 **[Live Streamlit Application](https://telco-customer-churn-mlgit-jxoyqjrh4fnrwdyps8q9fj.streamlit.app/)**
+🔗 **[Live Streamlit Application](https://churn-predictor-telecom-customer.streamlit.app/)**
 
 ---
 <!-- 
