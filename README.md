@@ -80,26 +80,108 @@ The dataset includes telecom customer records with usage patterns, billing data,
 | churn | Target label: customer churned or not |
 
 ---
+## 📈 Exploratory Data Analysis (EDA)
 
-## 📈 Exploratory Data Analysis & Graphs
+Before building the machine learning model, exploratory data analysis was performed to understand customer behavior, identify feature distributions, and discover factors associated with customer churn.
 
-The notebook includes detailed analysis with the following visualizations and insights:
+---
 
-- Churn class distribution chart showing the percentage of churned vs non-churned customers
-- Numerical feature distributions to inspect skewness and value ranges
-- Bivariate KDE plots comparing feature distributions by churn status
-- Categorical churn analysis for `area_code`, `international_plan`, and `voice_mail_plan`
-- Correlation heatmap for feature relationships
-- Pairplot and multivariate relationship analysis for international call metrics
-- Boxplots to inspect outliers across numerical features
+### Customer Churn Distribution
 
-### Key EDA Takeaways
+The following chart shows the percentage of churned and non-churned customers in the dataset.
 
-- Most customers do not churn, but churn rate spikes for customers with an international plan
-- Customers with a voicemail plan also show a higher churn percent compared to those without
-- Several call and charge features exhibit skewed distributions and should be standardized before training
-- The dataset is clean and ready for modeling after encoding and scaling
+<p align="center">
+  <img src="images/Percntage%20of%20churn.png" width="500">
+</p>
 
+**Key Takeaways:**
+
+- The dataset is imbalanced, with the majority of customers not churning.
+- Approximately **14%** of customers have churned.
+- This distribution was considered while selecting evaluation metrics during model training.
+
+---
+
+### Univariate Analysis
+
+Univariate analysis was performed to examine the distribution of each numerical feature individually.
+
+<p align="center">
+  <img src="images/univarate%20analysis.png" width="900">
+</p>
+
+**Key Takeaways:**
+
+- Overall, the data appears to be **approximately normally distributed**.
+- The features **number_vmail_messages**, **total_intl_calls**, and **number_customer_service_calls** exhibit **positively skewed distributions**.
+
+---
+
+### Bivariate Analysis
+
+This analysis compares the distribution of each numerical feature between churned and non-churned customers to identify features related to customer churn.
+
+<p align="center">
+  <img src="images/bivarate%20anal.png" width="900">
+</p>
+
+---
+
+### Categorical Feature Analysis
+
+To avoid writing repetitive code, two helper functions were created.
+
+- **ratio_with_target()** calculates the churn percentage for each category.
+- **visualization()** displays both customer counts and churn percentages for a selected feature.
+
+#### Area Code Analysis
+
+<p align="center">
+  <img src="images/catagrical%20analysis.png" width="650">
+</p>
+
+**Key Takeaways:**
+
+- The majority of customers belong to **Area Code 415**.
+- Customer churn remains consistent across all area codes, ranging between **14% and 15%**.
+
+---
+
+#### International Plan Analysis
+
+<p align="center">
+  <img src="images/catagrical%20analysis%202.png" width="650">
+</p>
+
+**Key Takeaways:**
+
+- Although relatively few customers subscribe to an **International Plan**, **42%** of them churned.
+- Customers **without** an International Plan have a churn rate of only **11%**.
+
+---
+
+#### Voice Mail Plan Analysis
+
+<p align="center">
+  <img src="images/catagrical%20analysis%203.png" width="650">
+</p>
+
+**Key Takeaways:**
+
+- Customers with a **Voice Mail Plan** exhibit a churn rate of **16%**.
+- Customers without a Voice Mail Plan show a comparatively lower churn rate.
+
+---
+
+### Summary of EDA
+
+The exploratory analysis revealed several important business insights:
+
+- Most customers do not churn, resulting in a moderately imbalanced dataset.
+- Customers with an **International Plan** are significantly more likely to churn.
+- Customers subscribed to a **Voice Mail Plan** also exhibit a relatively higher churn rate.
+- Most numerical features are approximately normally distributed, while a few display positive skewness.
+- These findings helped guide feature selection, preprocessing, and model development.
 ---
 
 ## 🔧 Machine Learning Pipeline
