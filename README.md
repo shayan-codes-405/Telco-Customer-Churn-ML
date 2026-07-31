@@ -281,11 +281,3 @@ streamlit run app.py
 - The live demo is hosted on Streamlit Cloud.
 
 ---
-
-## 👨‍💻 Author
-
-**Shayan**
-
-GitHub repository: https://github.com/shayan-codes-405/Telco-Customer-Churn-ML
-
----
