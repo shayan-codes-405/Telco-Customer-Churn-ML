@@ -12,9 +12,8 @@ A Machine Learning web application that predicts whether a telecom customer is l
 ---
 ## 🚀 Live Demo
 
-Experience the deployed application here:
+🔗 **[Live Streamlit Application](https://telco-customer-churn-mlgit-jxoyqjrh4fnrwdyps8q9fj.streamlit.app/)**
 
-🌐 **https://telco-customer-churn-mlgit-jxoyqjrh4fnrwdyps8q9fj.streamlit.app/**
 ---
 <!-- 
 ## � Repository
@@ -25,7 +24,7 @@ https://github.com/shayan-codes-405/Telco-Customer-Churn-ML -->
 
 
 
-## �📌 Project Summary
+## 📌 Project Summary
 
 This project helps telecom businesses identify customers who are at high risk of leaving the service. By predicting churn early, decision-makers can design retention campaigns, improve customer satisfaction, and preserve revenue.
 
