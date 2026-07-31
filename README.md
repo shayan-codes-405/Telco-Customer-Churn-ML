@@ -1,24 +1,29 @@
 # 📡 Telecom Customer Churn Prediction
 
+![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python)
+![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-ML-orange?logo=scikitlearn)
+![Streamlit](https://img.shields.io/badge/Streamlit-Deployed-red?logo=streamlit)
+![License](https://img.shields.io/badge/License-MIT-green)
+
+---
+
 A Machine Learning web application that predicts whether a telecom customer is likely to churn based on customer account details, service usage, and support history. The application is built with **Python**, **Scikit-learn**, **Streamlit**, and delivers fast, interpretable churn predictions with probability scores, risk labels, and downloadable reports.
 
 ---
-
 ## 🚀 Live Demo
 
-The app is deployed to Streamlit Cloud and available at:
+Experience the deployed application here:
 
-https://telco-customer-churn-mlgit-jxoyqjrh4fnrwdyps8q9fj.streamlit.app/
-
+🌐 **https://telco-customer-churn-mlgit-jxoyqjrh4fnrwdyps8q9fj.streamlit.app/**
 ---
-
+<!-- 
 ## � Repository
 
 Source code and project files are hosted on GitHub:
 
-https://github.com/shayan-codes-405/Telco-Customer-Churn-ML
+https://github.com/shayan-codes-405/Telco-Customer-Churn-ML -->
 
----
+
 
 ## �📌 Project Summary
 
