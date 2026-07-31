@@ -285,7 +285,3 @@ streamlit run app.py
 GitHub repository: https://github.com/shayan-codes-405/Telco-Customer-Churn-ML
 
 ---
-
-## 📜 License
-
-This project is intended for educational and portfolio purposes.
