@@ -304,7 +304,7 @@ st.markdown(
     "📡 Telecom Customer Churn Prediction System — Built with <strong>Python</strong>, "
     "<strong>Scikit-learn</strong>, and <strong>Streamlit</strong> — Developed by "
     "<strong>Shayan</strong> — "
-    "<a href='https://github.com/shayan-codes-405/Telco-Customer-Churn.git' style='color:#0d6efd; text-decoration:none;' target='_blank'>GitHub Repository</a>"
+    "<a href='https://github.com/shayan-codes-405/Telco-Customer-Churn-ML.git' style='color:#0d6efd; text-decoration:none;' target='_blank'>GitHub Repository</a>"
     "</div>",
     unsafe_allow_html=True
 )
