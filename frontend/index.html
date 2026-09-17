@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Telecom Customer Churn AI Diagnostic Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Chart.js for batch visual charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(145deg, #0b132b 0%, #111e38 50%, #0d172e 100%);
+      --card-bg: rgba(255, 255, 255, 0.035);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --card-hover: rgba(255, 255, 255, 0.06);
+      --accent-blue: #3b82f6;
+      --accent-purple: #8b5cf6;
+      --accent-cyan: #06b6d4;
+      --risk-high: #ef4444;
+      --risk-med: #f59e0b;
+      --risk-low: #10b981;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --glass-blur: blur(16px);
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --radius-full: 9999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      min-height: 100vh;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    /* Ambient Glowing Orbs Background */
+    .ambient-glow {
+      position: fixed;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      filter: blur(140px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.15;
+    }
+    .glow-1 { top: -100px; left: -100px; background: #3b82f6; }
+    .glow-2 { bottom: -100px; right: -100px; background: #8b5cf6; }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+    }
+
+    /* Header */
+    header {
+      background: var(--card-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 24px 32px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .brand-icon {
+      width: 52px;
+      height: 52px;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .brand-title {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #6ee7b7;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.6; }
+    }
+
+    /* Tabs Navigation */
+    .nav-tabs {
+      display: flex;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--card-border);
+      padding: 6px;
+      border-radius: var(--radius-md);
+      margin-bottom: 24px;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      flex: 1;
+      min-width: 170px;
+      padding: 12px 18px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.25s ease;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.25) 0%, rgba(139, 92, 246, 0.25) 100%);
+      color: #ffffff;
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Tab Content Panels */
+    .tab-pane {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    .tab-pane.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Grid Layout for Diagnostic Center */
+    .grid-2col {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 1024px) {
+      .grid-2col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Glass Cards */
+    .glass-card {
+      background: var(--card-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 26px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.25);
+      margin-bottom: 24px;
+      transition: border-color 0.25s ease;
+    }
+
+    .glass-card:hover {
+      border-color: rgba(255, 255, 255, 0.14);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge-tag {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 6px;
+    }
+    .tag-priority { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .tag-billing { background: rgba(59, 130, 246, 0.2); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.4); }
+
+    /* Form Fields & Controls */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .form-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #e2e8f0;
+    }
+
+    .form-val-display {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      background: rgba(6, 182, 212, 0.1);
+      padding: 2px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(6, 182, 212, 0.25);
+    }
+
+    .form-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Modern Sliders */
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-full);
+      outline: none;
+      -webkit-appearance: none;
+      transition: background 0.2s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #3b82f6;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
+      border: 2px solid #ffffff;
+      transition: transform 0.15s, background 0.15s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+      background: #60a5fa;
+    }
+
+    /* Select and Number Inputs */
+    .form-select, .form-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      color: #ffffff;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .form-select option {
+      background: #0f172a;
+      color: #ffffff;
+    }
+
+    .form-select:focus, .form-input:focus {
+      border-color: var(--accent-blue);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .form-row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    /* Collapsible Accordion */
+    details.advanced-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      margin-top: 16px;
+    }
+
+    details.advanced-box summary {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: none;
+    }
+
+    details.advanced-box summary:hover {
+      color: #ffffff;
+    }
+
+    .advanced-content {
+      padding-top: 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    /* Outcome Hero Card */
+    .outcome-card {
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 20px;
+      border: 2px solid transparent;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .outcome-card.risk-high {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(185, 28, 28, 0.3) 100%);
+      border-color: rgba(239, 68, 68, 0.6);
+      box-shadow: 0 0 35px rgba(239, 68, 68, 0.25);
+    }
+    .outcome-card.risk-med {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(180, 83, 9, 0.3) 100%);
+      border-color: rgba(245, 158, 11, 0.6);
+      box-shadow: 0 0 35px rgba(245, 158, 11, 0.25);
+    }
+    .outcome-card.risk-low {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(4, 120, 87, 0.3) 100%);
+      border-color: rgba(16, 185, 129, 0.6);
+      box-shadow: 0 0 35px rgba(16, 185, 129, 0.25);
+    }
+
+    .outcome-tier-badge {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: var(--radius-full);
+      margin-bottom: 8px;
+    }
+
+    .outcome-prob {
+      font-size: 56px;
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      line-height: 1.05;
+      margin: 4px 0 8px;
+    }
+
+    .outcome-desc {
+      font-size: 13px;
+      opacity: 0.9;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    /* Gauge Meter Container */
+    .gauge-wrapper {
+      position: relative;
+      width: 220px;
+      margin: 0 auto 16px;
+    }
+
+    svg.gauge-svg {
+      width: 100%;
+      height: auto;
+      transform: rotate(-90deg);
+    }
+
+    .gauge-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.08);
+      stroke-width: 14;
+    }
+
+    .gauge-progress {
+      fill: none;
+      stroke-width: 14;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.4s ease;
+    }
+
+    .gauge-center-text {
+      position: absolute;
+      top: 55%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .gauge-val {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .gauge-sub {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+
+    /* Risk Drivers / Explainability Chips */
+    .driver-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .driver-item {
+      background: rgba(255, 255, 255, 0.03);
+      border-left: 4px solid var(--accent-blue);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      font-size: 12px;
+      color: #e2e8f0;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .driver-item.driver-high { border-left-color: var(--risk-high); }
+    .driver-item.driver-med { border-left-color: var(--risk-med); }
+    .driver-item.driver-low { border-left-color: var(--risk-low); }
+
+    .driver-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .driver-text strong {
+      color: #ffffff;
+      display: block;
+      font-size: 13px;
+      margin-bottom: 2px;
+    }
+
+    /* Actions List */
+    .action-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .action-item {
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      font-size: 12px;
+    }
+
+    .action-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .action-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .action-badge {
+      font-size: 9px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      background: rgba(59, 130, 246, 0.2);
+      color: #93c5fd;
+    }
+
+    .action-desc {
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Action Buttons */
+    .btn-primary {
+      width: 100%;
+      background: linear-gradient(90deg, #2563eb 0%, #7c3aed 100%);
+      color: #ffffff;
+      border: none;
+      padding: 14px 24px;
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.25s ease;
+      margin-top: 16px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px rgba(37, 99, 235, 0.45);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      color: #ffffff;
+      padding: 10px 18px;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Batch Processing Styles */
+    .dropzone {
+      border: 2px dashed rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-lg);
+      padding: 40px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      background: rgba(255, 255, 255, 0.015);
+      margin-bottom: 24px;
+    }
+
+    .dropzone:hover, .dropzone.dragover {
+      border-color: var(--accent-blue);
+      background: rgba(59, 130, 246, 0.05);
+    }
+
+    .dropzone-icon {
+      font-size: 42px;
+      margin-bottom: 12px;
+      display: inline-block;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      text-align: center;
+    }
+
+    .kpi-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .kpi-val {
+      font-size: 28px;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    /* Table Styles */
+    .table-container {
+      overflow-x: auto;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      margin-top: 16px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      text-align: left;
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      padding: 12px 16px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: #e2e8f0;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .pill-risk {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .pill-high { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+    .pill-med { background: rgba(245, 158, 11, 0.2); color: #fde047; }
+    .pill-low { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 12px;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    /* Loading Spinner */
+    .spinner {
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      border-top: 3px solid #3b82f6;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="header-left">
+        <div class="brand-icon">📡</div>
+        <div>
+          <div class="brand-title">
+            Telecom Churn AI Diagnostic Center
+          </div>
+          <div class="brand-subtitle">
+            High-Performance Real-Time Risk Intelligence & Retention Automation
+          </div>
+        </div>
+      </div>
+      <div style="display: flex; gap: 12px; align-items: center;">
+        <div class="status-pill" id="apiStatusPill">
+          <span class="status-dot"></span>
+          <span id="apiStatusText">API Online</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('diagnostic')">
+        <span>⚡</span> Live Diagnostic
+      </button>
+      <button class="tab-btn" onclick="switchTab('batch')">
+        <span>📁</span> Batch CSV Scoring
+      </button>
+      <button class="tab-btn" onclick="switchTab('settings')">
+        <span>⚙️</span> API & Deployment Config
+      </button>
+    </div>
+
+    <!-- TAB 1: LIVE DIAGNOSTIC -->
+    <div id="tab-diagnostic" class="tab-pane active">
+      <div class="grid-2col">
+        <!-- Input Column -->
+        <div>
+          <!-- Key Risk Signals Card -->
+          <div class="glass-card">
+            <div class="card-header">
+              <div class="card-title">
+                <span>🔥 Primary Risk Indicators</span>
+              </div>
+              <span class="badge-tag tag-priority">High Weight</span>
+            </div>
+
+            <!-- Support Calls -->
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label">🎧 Customer Service Inquiries (Last 30 Days)</label>
+                <span class="form-val-display" id="val-support-calls">4 calls</span>
+              </div>
+              <input type="range" id="input-service-calls" min="0" max="10" value="4" oninput="updateDiagnostics()" />
+              <div class="form-hint">Customers with 4+ calls have an escalating risk of cancelling.</div>
+            </div>
+
+            <!-- Plans Grid -->
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label">✈️ International Plan</label>
+                <select class="form-select" id="input-intl-plan" onchange="updateDiagnostics()">
+                  <option value="1" selected>Active Plan (Yes)</option>
+                  <option value="0">No International Plan</option>
+                </select>
+                <div class="form-hint">Higher churn if international rates cause bill shock.</div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">📬 Voicemail Plan</label>
+                <select class="form-select" id="input-vmail-plan" onchange="updateDiagnostics()">
+                  <option value="0" selected>No Voicemail</option>
+                  <option value="1">Active Voicemail</option>
+                </select>
+                <div class="form-hint">Subscribers with voicemail churn less often.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Billing & Account Factors -->
+          <div class="glass-card">
+            <div class="card-header">
+              <div class="card-title">
+                <span>💰 Billing & Customer Account Profile</span>
+              </div>
+              <span class="badge-tag tag-billing">Account</span>
+            </div>
+
+            <!-- Daytime Charges -->
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label">☀️ Daytime Peak Call Charges ($/month)</label>
+                <span class="form-val-display" id="val-day-charge">$45.00</span>
+              </div>
+              <input type="range" id="input-day-charge" min="0" max="70" step="0.5" value="45.0" oninput="updateDiagnostics()" />
+              <div class="form-hint">Largest proportion of monthly billing volume.</div>
+            </div>
+
+            <!-- Account Length (Tenure) -->
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label">⏳ Customer Tenure (Months with Company)</label>
+                <span class="form-val-display" id="val-tenure">36 months</span>
+              </div>
+              <input type="range" id="input-tenure" min="1" max="240" step="1" value="36" oninput="updateDiagnostics()" />
+              <div class="form-hint">Newer customers (&lt; 12 months) are more price sensitive.</div>
+            </div>
+
+            <!-- Area Code -->
+            <div class="form-group">
+              <label class="form-label">📍 Area Code / Region</label>
+              <select class="form-select" id="input-area-code" onchange="updateDiagnostics()">
+                <option value="415" selected>Area Code 415 (San Francisco / Bay Area)</option>
+                <option value="408">Area Code 408 (San Jose / Silicon Valley)</option>
+                <option value="510">Area Code 510 (East Bay / Oakland)</option>
+              </select>
+            </div>
+
+            <!-- Collapsible Advanced Details -->
+            <details class="advanced-box">
+              <summary>
+                <span>⚙️ Advanced Usage Breakdown (Auto-Calculated)</span>
+                <span style="font-size: 11px; opacity: 0.7;">Click to expand</span>
+              </summary>
+              <div class="advanced-content">
+                <div>
+                  <label class="form-label">Day Calls Count</label>
+                  <input type="number" id="input-day-calls" class="form-input" value="110" min="0" max="300" oninput="updateDiagnostics()" />
+                </div>
+                <div>
+                  <label class="form-label">Evening Charge ($)</label>
+                  <input type="number" id="input-eve-charge" class="form-input" value="20.0" step="0.5" min="0" oninput="updateDiagnostics()" />
+                </div>
+                <div>
+                  <label class="form-label">Evening Calls Count</label>
+                  <input type="number" id="input-eve-calls" class="form-input" value="100" min="0" oninput="updateDiagnostics()" />
+                </div>
+                <div>
+                  <label class="form-label">Night Charge ($)</label>
+                  <input type="number" id="input-night-charge" class="form-input" value="10.0" step="0.5" min="0" oninput="updateDiagnostics()" />
+                </div>
+                <div>
+                  <label class="form-label">Night Calls Count</label>
+                  <input type="number" id="input-night-calls" class="form-input" value="95" min="0" oninput="updateDiagnostics()" />
+                </div>
+                <div>
+                  <label class="form-label">Int'l Charge ($)</label>
+                  <input type="number" id="input-intl-charge" class="form-input" value="4.5" step="0.5" min="0" oninput="updateDiagnostics()" />
+                </div>
+                <div>
+                  <label class="form-label">Int'l Calls Count</label>
+                  <input type="number" id="input-intl-calls" class="form-input" value="3" min="0" oninput="updateDiagnostics()" />
+                </div>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <!-- Outcome Column -->
+        <div>
+          <div class="glass-card" style="position: sticky; top: 20px;">
+            <div class="card-header">
+              <div class="card-title">
+                <span>🎯 Real-Time AI Diagnosis</span>
+              </div>
+              <span id="predSpinner" class="spinner" style="display: none;"></span>
+            </div>
+
+            <!-- Hero Risk Card -->
+            <div id="outcomeBox" class="outcome-card risk-high">
+              <div class="gauge-wrapper">
+                <svg class="gauge-svg" viewBox="0 0 120 120">
+                  <circle class="gauge-bg" cx="60" cy="60" r="50"></circle>
+                  <circle id="gaugeProgress" class="gauge-progress" cx="60" cy="60" r="50"
+                          stroke="#ef4444"
+                          stroke-dasharray="314.159"
+                          stroke-dashoffset="80"></circle>
+                </svg>
+                <div class="gauge-center-text">
+                  <div class="gauge-val" id="gaugePct">74.4%</div>
+                  <div class="gauge-sub">Churn Risk</div>
+                </div>
+              </div>
+
+              <div id="outcomeTierBadge" class="outcome-tier-badge" style="background: rgba(239,68,68,0.25); color: #fca5a5;">
+                🚨 HIGH CHURN RISK
+              </div>
+              <div id="outcomeSummary" class="outcome-desc">
+                Action Needed: Customer displays severe churn signals and is very likely to cancel soon.
+              </div>
+            </div>
+
+            <!-- Explainability: Why is this customer at risk? -->
+            <div style="margin-top: 20px;">
+              <div class="card-title" style="font-size: 14px; margin-bottom: 8px;">
+                <span>❓ Key Risk Drivers</span>
+              </div>
+              <div id="driverList" class="driver-list">
+                <!-- Dynamically injected -->
+              </div>
+            </div>
+
+            <!-- AI Recommended Retention Playbook -->
+            <div style="margin-top: 20px;">
+              <div class="card-title" style="font-size: 14px; margin-bottom: 8px;">
+                <span>💡 Recommended Retention Actions</span>
+              </div>
+              <ul id="actionList" class="action-list">
+                <!-- Dynamically injected -->
+              </ul>
+            </div>
+
+            <!-- Export Buttons -->
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+              <button class="btn-secondary" style="flex: 1;" onclick="downloadDiagnosticReport('csv')">
+                📥 Export CSV
+              </button>
+              <button class="btn-secondary" style="flex: 1;" onclick="downloadDiagnosticReport('json')">
+                📄 Export JSON
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: BATCH CSV SCORING -->
+    <div id="tab-batch" class="tab-pane">
+      <div class="glass-card">
+        <div class="card-header">
+          <div class="card-title">
+            <span>📁 Bulk Customer File Scoring</span>
+          </div>
+          <a href="/api/sample-csv" download class="btn-secondary" style="text-decoration: none;">
+            <span>📥 Download Sample CSV</span>
+          </a>
+        </div>
+
+        <div id="dropzone" class="dropzone" onclick="document.getElementById('csvFileInput').click()">
+          <input type="file" id="csvFileInput" accept=".csv" style="display: none;" onchange="handleFileUpload(event)" />
+          <div class="dropzone-icon">☁️</div>
+          <div style="font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 4px;">
+            Drag & Drop Customer CSV Here or Click to Browse
+          </div>
+          <div style="font-size: 13px; color: var(--text-muted);">
+            Supports standard telecom datasets with 13 features. Automatic scaling and risk scoring.
+          </div>
+        </div>
+
+        <!-- KPI Metrics (Hidden until uploaded) -->
+        <div id="batchKpis" style="display: none;">
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-label">Total Analyzed</div>
+              <div class="kpi-val" id="kpi-total">0</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">High Churn Risk</div>
+              <div class="kpi-val" id="kpi-high" style="color: var(--risk-high);">0</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Moderate Risk</div>
+              <div class="kpi-val" id="kpi-med" style="color: var(--risk-med);">0</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Low Risk Accounts</div>
+              <div class="kpi-val" id="kpi-low" style="color: var(--risk-low);">0</div>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px; margin-bottom: 12px; flex-wrap: wrap; gap: 12px;">
+            <div class="card-title">
+              <span>📋 Scored Customer Records (Preview)</span>
+            </div>
+            <button id="downloadScoredBtn" class="btn-primary" style="width: auto; margin-top: 0;" onclick="downloadScoredCSV()">
+              📥 Download Complete Scored CSV
+            </button>
+          </div>
+
+          <div class="table-container">
+            <table id="batchTable">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Tenure</th>
+                  <th>Area</th>
+                  <th>Int'l Plan</th>
+                  <th>Vmail</th>
+                  <th>Day Bill</th>
+                  <th>Support Calls</th>
+                  <th>Probability</th>
+                  <th>Risk Tier</th>
+                </tr>
+              </thead>
+              <tbody id="batchTableBody">
+                <!-- Rows injected dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: SETTINGS & DEPLOYMENT -->
+    <div id="tab-settings" class="tab-pane">
+      <div class="glass-card">
+        <div class="card-header">
+          <div class="card-title">
+            <span>⚙️ API Endpoint & Cloud Deployment Settings</span>
+          </div>
+        </div>
+
+        <div class="form-group" style="max-width: 600px;">
+          <label class="form-label">API Base URL</label>
+          <div style="display: flex; gap: 10px; margin-top: 6px;">
+            <input type="text" id="apiBaseUrl" class="form-input" value="" placeholder="e.g. https://your-app.onrender.com (leave blank for same origin)" />
+            <button class="btn-secondary" onclick="saveApiUrl()">Save & Test</button>
+          </div>
+          <div class="form-hint">If hosting frontend on <strong>Vercel</strong> and backend on <strong>Render</strong>, enter your Render API URL here.</div>
+        </div>
+
+        <div style="margin-top: 24px;">
+          <div class="card-title" style="font-size: 15px;">🚀 Deployment Checklist</div>
+          <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 18px; margin-top: 10px; font-size: 13px; line-height: 1.7;">
+            <p>✅ <strong>Backend (Render / Koyeb):</strong> Deploy repository as a Python Web Service with start command: <code>uvicorn server:app --host 0.0.0.0 --port $PORT</code></p>
+            <p>✅ <strong>Frontend (Vercel / Netlify):</strong> Deploy the <code>static/</code> directory as a static site, and enter the Render API URL in settings.</p>
+            <p>✅ <strong>24/7 Keep-Alive:</strong> Set up a free monitor on <a href="https://cron-job.org" target="_blank" style="color: var(--accent-cyan);">cron-job.org</a> or <a href="https://uptimerobot.com" target="_blank" style="color: var(--accent-cyan);">UptimeRobot</a> pinging <code>/health</code> every 10 minutes to prevent cold boots.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      Telecom Customer Churn AI Intelligence • Built with FastAPI, Scikit-Learn & Modern Web Architecture
+    </footer>
+  </div>
+
+  <script>
+    // Config State
+    let API_BASE = localStorage.getItem('telco_api_base') || window.location.origin;
+    if (API_BASE.endsWith('/')) API_BASE = API_BASE.slice(0, -1);
+    
+    document.getElementById('apiBaseUrl').value = localStorage.getItem('telco_api_base') || '';
+
+    let debounceTimer = null;
+    let currentPredictionData = null;
+    let fullScoredCsvData = '';
+
+    // Initialize
+    window.addEventListener('DOMContentLoaded', () => {
+      checkApiHealth();
+      updateDiagnostics();
+    });
+
+    function saveApiUrl() {
+      const val = document.getElementById('apiBaseUrl').value.trim();
+      localStorage.setItem('telco_api_base', val);
+      API_BASE = val || window.location.origin;
+      checkApiHealth();
+      updateDiagnostics();
+    }
+
+    async function checkApiHealth() {
+      try {
+        const res = await fetch(`${API_BASE}/health`);
+        if (res.ok) {
+          const data = await res.json();
+          document.getElementById('apiStatusPill').style.display = 'inline-flex';
+          document.getElementById('apiStatusText').textContent = 'API Online (Uptime: ' + data.uptime_seconds + 's)';
+        } else {
+          document.getElementById('apiStatusText').textContent = 'API Offline';
+        }
+      } catch (e) {
+        document.getElementById('apiStatusText').textContent = 'API Disconnected';
+      }
+    }
+
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+
+      event.currentTarget.classList.add('active');
+      document.getElementById(`tab-${tabName}`).classList.add('active');
+    }
+
+    function getCustomerPayload() {
+      return {
+        account_length: parseInt(document.getElementById('input-tenure').value),
+        area_code: parseInt(document.getElementById('input-area-code').value),
+        international_plan: parseInt(document.getElementById('input-intl-plan').value),
+        voice_mail_plan: parseInt(document.getElementById('input-vmail-plan').value),
+        total_day_calls: parseInt(document.getElementById('input-day-calls').value) || 110,
+        total_day_charge: parseFloat(document.getElementById('input-day-charge').value),
+        total_eve_calls: parseInt(document.getElementById('input-eve-calls').value) || 100,
+        total_eve_charge: parseFloat(document.getElementById('input-eve-charge').value) || 20.0,
+        total_night_calls: parseInt(document.getElementById('input-night-calls').value) || 95,
+        total_night_charge: parseFloat(document.getElementById('input-night-charge').value) || 10.0,
+        total_intl_calls: parseInt(document.getElementById('input-intl-calls').value) || 3,
+        total_intl_charge: parseFloat(document.getElementById('input-intl-charge').value) || 4.5,
+        number_customer_service_calls: parseInt(document.getElementById('input-service-calls').value)
+      };
+    }
+
+    function updateDiagnostics() {
+      // Update label displays
+      document.getElementById('val-support-calls').textContent = `${document.getElementById('input-service-calls').value} calls`;
+      document.getElementById('val-day-charge').textContent = `$${parseFloat(document.getElementById('input-day-charge').value).toFixed(2)}`;
+      document.getElementById('val-tenure').textContent = `${document.getElementById('input-tenure').value} months`;
+
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(runPrediction, 120);
+    }
+
+    async function runPrediction() {
+      const payload = getCustomerPayload();
+      document.getElementById('predSpinner').style.display = 'inline-block';
+
+      try {
+        const response = await fetch(`${API_BASE}/api/predict`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error('Prediction API error');
+        }
+
+        const json = await response.json();
+        const data = json.data;
+        currentPredictionData = data;
+        renderOutcome(data);
+      } catch (err) {
+        console.error('API Error:', err);
+      } finally {
+        document.getElementById('predSpinner').style.display = 'none';
+      }
+    }
+
+    function renderOutcome(data) {
+      const prob = data.churn_probability;
+      const probPct = data.churn_probability_pct;
+      const tier = data.risk_tier;
+
+      // Update Gauge SVG
+      const circumference = 314.159; // 2 * PI * 50
+      const offset = circumference - (prob * circumference);
+      const gaugeEl = document.getElementById('gaugeProgress');
+      gaugeEl.style.strokeDashoffset = offset;
+      gaugeEl.style.stroke = data.risk_color;
+
+      document.getElementById('gaugePct').textContent = probPct;
+      document.getElementById('gaugePct').style.color = data.risk_color;
+
+      // Update Outcome Box
+      const box = document.getElementById('outcomeBox');
+      box.className = 'outcome-card ' + (prob >= 0.65 ? 'risk-high' : prob >= 0.35 ? 'risk-med' : 'risk-low');
+
+      const badge = document.getElementById('outcomeTierBadge');
+      badge.textContent = (prob >= 0.65 ? '🚨 ' : prob >= 0.35 ? '⚠️ ' : '💚 ') + tier;
+      badge.style.background = prob >= 0.65 ? 'rgba(239,68,68,0.25)' : prob >= 0.35 ? 'rgba(245,158,11,0.25)' : 'rgba(16,185,129,0.25)';
+      badge.style.color = data.risk_color;
+
+      document.getElementById('outcomeSummary').textContent = data.summary_text;
+
+      // Render Risk Drivers
+      const driverList = document.getElementById('driverList');
+      driverList.innerHTML = '';
+      data.risk_drivers.forEach(d => {
+        const div = document.createElement('div');
+        div.className = `driver-item driver-${d.severity}`;
+        div.innerHTML = `
+          <div class="driver-icon">${d.icon}</div>
+          <div class="driver-text">
+            <strong>${d.title}</strong>
+            ${d.description}
+          </div>
+        `;
+        driverList.appendChild(div);
+      });
+
+      // Render Actions
+      const actionList = document.getElementById('actionList');
+      actionList.innerHTML = '';
+      data.retention_actions.forEach(a => {
+        const li = document.createElement('li');
+        li.className = 'action-item';
+        li.innerHTML = `
+          <div class="action-header">
+            <span class="action-title">${a.title}</span>
+            <span class="action-badge">${a.priority}</span>
+          </div>
+          <div class="action-desc">${a.action}</div>
+        `;
+        actionList.appendChild(li);
+      });
+    }
+
+    function downloadDiagnosticReport(format) {
+      if (!currentPredictionData) return;
+      const ts = new Date().toISOString().slice(0, 10);
+
+      if (format === 'json') {
+        const blob = new Blob([JSON.stringify(currentPredictionData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `churn_diagnosis_${ts}.json`;
+        a.click();
+      } else {
+        const flatData = {
+          ...currentPredictionData.input_features,
+          predicted_churn: currentPredictionData.predicted_churn,
+          churn_probability: currentPredictionData.churn_probability,
+          risk_tier: currentPredictionData.risk_tier,
+          diagnosed_at: new Date().toISOString()
+        };
+        const headers = Object.keys(flatData).join(',');
+        const values = Object.values(flatData).join(',');
+        const csvContent = `${headers}\n${values}`;
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `churn_diagnosis_${ts}.csv`;
+        a.click();
+      }
+    }
+
+    // Drag and Drop & Batch CSV
+    const dropzone = document.getElementById('dropzone');
+    ['dragenter', 'dragover'].forEach(name => {
+      dropzone.addEventListener(name, (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
+    });
+    ['dragleave', 'drop'].forEach(name => {
+      dropzone.addEventListener(name, (e) => { e.preventDefault(); dropzone.classList.remove('dragover'); });
+    });
+    dropzone.addEventListener('drop', (e) => {
+      const files = e.dataTransfer.files;
+      if (files.length > 0) uploadCSV(files[0]);
+    });
+
+    function handleFileUpload(e) {
+      const file = e.target.files[0];
+      if (file) uploadCSV(file);
+    }
+
+    async function uploadCSV(file) {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const res = await fetch(`${API_BASE}/api/predict/batch`, {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          alert('Batch processing failed: ' + (err.detail || 'Unknown error'));
+          return;
+        }
+
+        const data = await res.json();
+        renderBatchResults(data);
+      } catch (err) {
+        alert('Upload failed: ' + err.message);
+      }
+    }
+
+    function renderBatchResults(data) {
+      fullScoredCsvData = data.csv_data;
+      document.getElementById('batchKpis').style.display = 'block';
+
+      document.getElementById('kpi-total').textContent = data.summary.total_records;
+      document.getElementById('kpi-high').textContent = `${data.summary.high_risk_count} (${data.summary.high_risk_pct})`;
+      document.getElementById('kpi-med').textContent = data.summary.medium_risk_count;
+      document.getElementById('kpi-low').textContent = data.summary.low_risk_count;
+
+      const tbody = document.getElementById('batchTableBody');
+      tbody.innerHTML = '';
+
+      data.preview.forEach((row, idx) => {
+        const tr = document.createElement('tr');
+        const prob = row.churn_probability;
+        const pillClass = prob >= 0.65 ? 'pill-high' : prob >= 0.35 ? 'pill-med' : 'pill-low';
+
+        tr.innerHTML = `
+          <td>${idx + 1}</td>
+          <td>${row.account_length || '-'} mo</td>
+          <td>${row.area_code || '-'}</td>
+          <td>${row.international_plan == 1 ? 'Yes' : 'No'}</td>
+          <td>${row.voice_mail_plan == 1 ? 'Yes' : 'No'}</td>
+          <td>$${parseFloat(row.total_day_charge || 0).toFixed(2)}</td>
+          <td>${row.number_customer_service_calls || 0}</td>
+          <td style="font-weight: 700;">${row.churn_probability_pct}</td>
+          <td><span class="pill-risk ${pillClass}">${row.risk_tier}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function downloadScoredCSV() {
+      if (!fullScoredCsvData) return;
+      const blob = new Blob([fullScoredCsvData], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `scored_telco_churn_customers_${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+    }
+  </script>
+</body>
+</html>

@@ -1,283 +1,136 @@
-# 📡 Telecom Customer Churn Prediction
+# 📡 Telecom Customer Churn AI Diagnostic Center
 
-![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python)
-![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-ML-orange?logo=scikitlearn)
-![Streamlit](https://img.shields.io/badge/Streamlit-Deployed-red?logo=streamlit)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.100%2B-009688?logo=fastapi)
+![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-1.3%2B-orange?logo=scikitlearn)
+![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?logo=vercel)
+![Render](https://img.shields.io/badge/Render-Deployed-46E3B7?logo=render)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
----
-
-A Machine Learning web application that predicts whether a telecom customer is likely to churn based on customer account details, service usage, and support history. The application is built with **Python**, **Scikit-learn**, **Streamlit**, and delivers fast, interpretable churn predictions with probability scores, risk labels, and downloadable reports.
-
----
-## 🚀 Live Demo
-
-🔗 **[Live Streamlit Application](https://churn-predictor-telecom-customer.streamlit.app/)**
-
----
-<!-- 
-## � Repository
-
-Source code and project files are hosted on GitHub:
-
-https://github.com/shayan-codes-405/Telco-Customer-Churn-ML -->
-
-
-
-## 📌 Project Summary
-
-This project helps telecom businesses identify customers who are at high risk of leaving the service. By predicting churn early, decision-makers can design retention campaigns, improve customer satisfaction, and preserve revenue.
-
-### Business Value
-
-- Reduce customer churn and improve customer lifetime value
-- Identify at-risk customers for targeted retention offers
-- Use model-driven insights to prioritize customer support
-- Convert churn risk scores into operational actions for marketing and sales teams
+A production-ready Machine Learning web application and high-performance **FastAPI** backend that predicts telecom customer churn risk in real-time. Delivers instant risk scoring, explainable AI risk drivers, automated retention recommendations, and bulk CSV dataset scoring with an executive Glassmorphism dashboard.
 
 ---
 
-## 📊 What Is Included
+## 📁 Clean Project Directory Structure
 
-- Interactive Streamlit interface for real-time churn prediction
-- Detailed customer input form with 13 service usage features
-- Churn probability, risk label, and visual feedback
-- Downloadable CSV report of prediction results
-- Feature importance visualization
-- Notebook with exploratory data analysis, model experiments, and evaluation graphs
-
----
-
-## 🧠 Dataset Summary
-
-The dataset includes telecom customer records with usage patterns, billing data, subscription features, and customer care activity.
-
-- Dataset file: `Data_Churn.csv`
-- Test file for prediction: `Data_Test.csv`
-- Total records: 4,250
-- Total features: 20
-- No missing values and no duplicate records
-
-### Feature List
-
-| Feature | Description |
-|---|---|
-| state | Customer U.S. state |
-| account_length | Months with the provider |
-| area_code | Customer area code |
-| international_plan | Has international calling plan |
-| voice_mail_plan | Has voicemail plan |
-| number_vmail_messages | Number of voicemail messages |
-| total_day_minutes | Daytime call minutes |
-| total_day_calls | Daytime call count |
-| total_day_charge | Daytime call charges |
-| total_eve_minutes | Evening call minutes |
-| total_eve_calls | Evening call count |
-| total_eve_charge | Evening call charges |
-| total_night_minutes | Night call minutes |
-| total_night_calls | Night call count |
-| total_night_charge | Night call charges |
-| total_intl_minutes | International call minutes |
-| total_intl_calls | International call count |
-| total_intl_charge | International call charges |
-| number_customer_service_calls | Customer service calls count |
-| churn | Target label: customer churned or not |
-
----
-## 📈 Exploratory Data Analysis (EDA)
-
-Before building the machine learning model, exploratory data analysis was performed to understand customer behavior, identify feature distributions, and discover factors associated with customer churn.
-
----
-
-### Customer Churn Distribution
-
-The following chart shows the percentage of churned and non-churned customers in the dataset.
-
-<p align="center">
-  <img src="images/Percntage%20of%20churn.png" width="500">
-</p>
-
-**Key Takeaways:**
-
-- The dataset is imbalanced, with the majority of customers not churning.
-- Approximately **14%** of customers have churned.
-- This distribution was considered while selecting evaluation metrics during model training.
-
----
-
-### Univariate Analysis
-
-Univariate analysis was performed to examine the distribution of each numerical feature individually.
-
-<p align="center">
-  <img src="images/univarate%20analysis.png" width="900">
-</p>
-
-**Key Takeaways:**
-
-- Overall, the data appears to be **approximately normally distributed**.
-- The features **number_vmail_messages**, **total_intl_calls**, and **number_customer_service_calls** exhibit **positively skewed distributions**.
-
----
-
-### Bivariate Analysis
-
-This analysis compares the distribution of each numerical feature between churned and non-churned customers to identify features related to customer churn.
-
-<p align="center">
-  <img src="images/bivarate%20anal.png" width="900">
-</p>
-
----
-
-### Categorical Feature Analysis
-
-To avoid writing repetitive code, two helper functions were created.
-
-- **ratio_with_target()** calculates the churn percentage for each category.
-- **visualization()** displays both customer counts and churn percentages for a selected feature.
-
-#### Area Code Analysis
-
-<p align="center">
-  <img src="images/catagrical%20analysis.png" width="650">
-</p>
-
-**Key Takeaways:**
-
-- The majority of customers belong to **Area Code 415**.
-- Customer churn remains consistent across all area codes, ranging between **14% and 15%**.
-
----
-
-#### International Plan Analysis
-
-<p align="center">
-  <img src="images/catagrical%20analysis%202.png" width="650">
-</p>
-
-**Key Takeaways:**
-
-- Although relatively few customers subscribe to an **International Plan**, **42%** of them churned.
-- Customers **without** an International Plan have a churn rate of only **11%**.
-
----
-
-#### Voice Mail Plan Analysis
-
-<p align="center">
-  <img src="images/catagrical%20analysis%203.png" width="650">
-</p>
-
-**Key Takeaways:**
-
-- Customers with a **Voice Mail Plan** exhibit a churn rate of **16%**.
-- Customers without a Voice Mail Plan show a comparatively lower churn rate.
-
----
-
-### Summary of EDA
-
-The exploratory analysis revealed several important business insights:
-
-- Most customers do not churn, resulting in a moderately imbalanced dataset.
-- Customers with an **International Plan** are significantly more likely to churn.
-- Customers subscribed to a **Voice Mail Plan** also exhibit a relatively higher churn rate.
-- Most numerical features are approximately normally distributed, while a few display positive skewness.
-- These findings helped guide feature selection, preprocessing, and model development.
----
-
-## 🔧 Machine Learning Pipeline
-
-### Preprocessing
-
-- Categorical features are label-encoded
-- Redundant features removed during feature selection
-- Numeric features standardized using `StandardScaler`
-
-### Modeling
-
-The project evaluates multiple models:
-
-- Logistic Regression
-- Random Forest Classifier
-- XGBoost Classifier
-
-### Evaluation
-
-- Cross-validation recall used during model selection
-- ROC-AUC and confusion matrix used for model performance analysis
-- Feature importance and SHAP analysis provide explainability
-
-### Final Model
-
-The final deployed model is a **Random Forest Classifier** saved as `model.pkl` and `scaler.pkl` for inference in the Streamlit app.
-
----
-
-## 🚀 Streamlit App Features
-
-- User-friendly sidebar form for customer input
-- Real-time churn prediction with probability score
-- Clear risk label: High / Medium / Low risk
-- Download prediction report as CSV
-- In-app feature importance chart
-- Customer input summary table
-
----
-
-## 📂 Project Structure
-
-```text
-Telco-Customer-Churn/
-├── app.py
-├── Predict_Churn.ipynb
-├── Data_Churn.csv
-├── Data_Test.csv
-├── model.pkl
-├── scaler.pkl
-├── submit.csv
-├── final.csv
-├── requirements.txt
-├── README.md
-└── .gitignore
+```
+Telco-Customers-Churn/
+│
+├── data/
+│   ├── raw/                      # Original raw datasets (Data_Churn.csv, Data_Test.csv)
+│   └── processed/                # Evaluated outputs (final.csv, submit.csv)
+│
+├── models/                       # Trained ML artifacts
+│   ├── model.pkl                 # Random Forest Classifier
+│   ├── scaler.pkl                # Standard Scaler
+│   └── label_encoder.pkl
+│
+├── notebooks/
+│   └── Predict_Churn.ipynb       # Exploratory Data Analysis & Model Training
+│
+├── src/                          # Modular Python Inference & Engine Package
+│   ├── __init__.py
+│   ├── config.py                 # Feature definitions, paths & categorical mapping dictionaries
+│   └── predictor.py              # Fixed ChurnPredictor class (resolves area_code distortion)
+│
+├── static/                       # Production Glassmorphism Web Dashboard
+│   └── index.html                # Single customer diagnostics + Batch CSV upload dropzone
+│
+├── frontend/                     # Dedicated folder for Vercel deployment
+│   └── index.html
+│
+├── images/                       # EDA charts & graphs
+├── server.py                     # High-performance FastAPI REST API
+├── app.py                        # Streamlit Dashboard (alternative UI)
+├── requirements.txt              # Production dependencies
+├── vercel.json                   # Vercel deployment configuration
+├── render.yaml                   # Render web service configuration
+└── README.md
 ```
 
 ---
 
-## ⚙️ Installation
+## 🚀 Quick Start (Local Run)
 
-Clone the repository:
-
-```bash
-git clone https://github.com/shayan-codes-405/Telco-Customer-Churn-ML.git
-```
-
-Change directory:
-
-```bash
-cd Telco-Customer-Churn
-```
-
-Install dependencies:
-
+### 1. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-Run the Streamlit app:
+### 2. Run the FastAPI Dashboard (Recommended)
+```bash
+uvicorn server:app --reload --port 8000
+```
+Open your browser at **[http://localhost:8000](http://localhost:8000)**.
+- Interactive Dashboard: `http://localhost:8000`
+- Interactive API Docs (Swagger): `http://localhost:8000/docs`
+- Health Endpoint: `http://localhost:8000/health`
 
+### 3. Alternative: Run Streamlit Dashboard
 ```bash
 streamlit run app.py
 ```
 
 ---
 
-## 📌 Notes
+## 🌐 100% Free Cloud Deployment Guide (Render + Vercel)
 
-- The notebook contains full exploratory analysis, feature engineering, model training, and evaluation.
-- `submit.csv` and `final.csv` are generated outputs for prediction results.
-- The live demo is hosted on Streamlit Cloud.
+### Option A: All-in-One Deployment on Render.com (Easiest)
+Because FastAPI directly serves the static dashboard at `/`, you can host both the backend API and frontend on a single free Render Web Service:
+
+1. Push your repository to GitHub.
+2. Log in to **[Render.com](https://render.com/)** and click **New +** > **Web Service**.
+3. Connect your GitHub repository.
+4. Set the following settings:
+   - **Environment:** `Python 3`
+   - **Build Command:** `pip install -r requirements.txt`
+   - **Start Command:** `uvicorn server:app --host 0.0.0.0 --port $PORT`
+   - **Plan:** `Free`
+5. Click **Deploy Web Service**. Your app will be live at `https://your-service.onrender.com`.
 
 ---
+
+### Option B: Decoupled Architecture (Vercel Frontend + Render Backend)
+
+#### Step 1: Deploy Backend on Render
+1. Deploy the repository to Render as described in Option A.
+2. Note your backend URL (e.g. `https://telco-churn-api.onrender.com`).
+
+#### Step 2: Deploy Frontend to Vercel
+1. Log in to **[Vercel.com](https://vercel.com/)** and click **Add New...** > **Project**.
+2. Select your repository.
+3. In Build & Development Settings:
+   - **Framework Preset:** `Other`
+   - **Root Directory:** `./` (or `static`)
+4. Click **Deploy**.
+5. Once deployed, open your Vercel site, go to the **⚙️ API & Deployment Config** tab, paste your Render URL (`https://telco-churn-api.onrender.com`), and click **Save & Test**.
+
+---
+
+### ⏰ How to Keep Render Backend Awake 24/7 (Prevent Sleep Mode)
+Free Render web services sleep after 15 minutes of inactivity. To keep your API hot and fast:
+1. Go to **[cron-job.org](https://cron-job.org/)** or **[UptimeRobot](https://uptimerobot.com/)** (both 100% free).
+2. Create a new HTTP monitor pointing to:
+   ```
+   https://your-service.onrender.com/health
+   ```
+3. Set execution interval to **Every 10 minutes**.
+4. Your API will now stay alive 24/7 with zero cold boot delays!
+
+---
+
+## 🛠️ API Reference
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/health` | Server & model health status for uptime monitoring |
+| `GET` | `/api/info` | Feature list and model metadata |
+| `POST` | `/api/predict` | Single customer churn risk diagnostic |
+| `POST` | `/api/predict/batch` | Bulk CSV file upload and scoring |
+| `GET` | `/api/sample-csv` | Download sample CSV for testing |
+
+---
+
+## 🎯 Bug Fixes Applied
+1. **Area Code Scaling Fix:** Training data mapped `area_code` (`area_code_408`, `area_code_415`, `area_code_510`) to `0, 1, 2`. The new inference pipeline maps area codes before standard scaling, preventing distorted inputs.
+2. **Modular Architecture:** Extracted all inference and data preparation logic into `src/predictor.py` and `src/config.py`.
