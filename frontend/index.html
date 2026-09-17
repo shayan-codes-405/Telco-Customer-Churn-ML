@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Telecom Churn Intelligence & Diagnostic Dashboard</title>
+  <title>Telecom Customer Churn Analytics & Intelligence Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -11,14 +11,13 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
-      --bg-gradient: linear-gradient(135deg, #070d1e 0%, #0e172e 40%, #091224 100%);
+      --bg-gradient: linear-gradient(145deg, #070d1e 0%, #0c152a 50%, #081020 100%);
       --card-bg: rgba(255, 255, 255, 0.035);
-      --card-border: rgba(255, 255, 255, 0.07);
+      --card-border: rgba(255, 255, 255, 0.075);
       --card-hover: rgba(255, 255, 255, 0.06);
       --accent-blue: #3b82f6;
       --accent-purple: #8b5cf6;
       --accent-cyan: #06b6d4;
-      --accent-emerald: #10b981;
       --risk-high: #ef4444;
       --risk-med: #f59e0b;
       --risk-low: #10b981;
@@ -29,7 +28,6 @@
       --radius-sm: 8px;
       --radius-md: 14px;
       --radius-lg: 20px;
-      --radius-full: 9999px;
     }
 
     * {
@@ -47,7 +45,7 @@
       overflow-x: hidden;
     }
 
-    /* Ambient Glow */
+    /* Ambient Glow Background Orbs */
     .ambient-glow {
       position: fixed;
       width: 600px;
@@ -64,20 +62,20 @@
     .container {
       position: relative;
       z-index: 1;
-      max-width: 1540px;
+      max-width: 1480px;
       margin: 0 auto;
-      padding: 24px 28px 60px;
+      padding: 28px 24px 60px;
     }
 
-    /* Top Navigation Bar */
+    /* Header */
     header {
       background: var(--card-bg);
       backdrop-filter: var(--glass-blur);
       -webkit-backdrop-filter: var(--glass-blur);
       border: 1px solid var(--card-border);
       border-radius: var(--radius-lg);
-      padding: 20px 28px;
-      margin-bottom: 24px;
+      padding: 24px 32px;
+      margin-bottom: 28px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -93,71 +91,46 @@
     }
 
     .brand-icon {
-      width: 48px;
-      height: 48px;
+      width: 52px;
+      height: 52px;
       background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
       border-radius: var(--radius-md);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
-      box-shadow: 0 8px 18px rgba(59, 130, 246, 0.3);
+      font-size: 26px;
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
     }
 
     .brand-title {
-      font-size: 22px;
+      font-size: 24px;
       font-weight: 800;
       letter-spacing: -0.5px;
       color: #ffffff;
-      display: flex;
-      align-items: center;
-      gap: 8px;
     }
 
     .brand-sub {
       font-size: 13px;
       color: var(--text-muted);
+      margin-top: 2px;
     }
 
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(16, 185, 129, 0.12);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      color: #6ee7b7;
-      padding: 6px 14px;
-      border-radius: var(--radius-full);
+    .dataset-badge {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      padding: 8px 16px;
+      border-radius: 9999px;
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 700;
+      color: #e2e8f0;
     }
 
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #10b981;
-      box-shadow: 0 0 8px #10b981;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.3); opacity: 0.6; }
-    }
-
-    /* Top Executive KPI Row */
+    /* Executive KPI Row */
     .kpi-row {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 18px;
-      margin-bottom: 24px;
+      gap: 20px;
+      margin-bottom: 28px;
     }
 
     @media (max-width: 1024px) {
@@ -176,29 +149,30 @@
       backdrop-filter: var(--glass-blur);
       border: 1px solid var(--card-border);
       border-radius: var(--radius-lg);
-      padding: 20px 24px;
+      padding: 22px 26px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       transition: transform 0.2s, border-color 0.2s;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
     }
 
     .kpi-card:hover {
       transform: translateY(-3px);
-      border-color: rgba(255, 255, 255, 0.14);
+      border-color: rgba(255, 255, 255, 0.16);
     }
 
-    .kpi-info-label {
+    .kpi-label {
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.6px;
       margin-bottom: 4px;
     }
 
-    .kpi-info-val {
-      font-size: 30px;
+    .kpi-val {
+      font-size: 32px;
       font-weight: 800;
       color: #ffffff;
       line-height: 1.1;
@@ -211,34 +185,63 @@
     }
 
     .kpi-icon-box {
-      width: 46px;
-      height: 46px;
+      width: 48px;
+      height: 48px;
       border-radius: var(--radius-md);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 20px;
+      font-size: 22px;
     }
     .icon-blue { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
     .icon-red { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
     .icon-amber { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
     .icon-green { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
 
-    /* Main Dashboard Layout */
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: 1.45fr 1fr;
-      gap: 24px;
+    /* Section Header */
+    .section-title-box {
+      margin-bottom: 20px;
+      margin-top: 10px;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
     }
 
-    @media (max-width: 1200px) {
-      .dashboard-grid {
+    /* 2-Column Analytics Grid */
+    .charts-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 1024px) {
+      .charts-grid-2 {
         grid-template-columns: 1fr;
       }
     }
 
-    /* Glass Cards */
-    .glass-card {
+    /* Full-Width Chart Container */
+    .charts-grid-1 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    /* Glass Analytics Card */
+    .chart-card {
       background: var(--card-bg);
       backdrop-filter: var(--glass-blur);
       -webkit-backdrop-filter: var(--glass-blur);
@@ -246,18 +249,25 @@
       border-radius: var(--radius-lg);
       padding: 24px;
       box-shadow: 0 16px 36px rgba(0, 0, 0, 0.25);
-      margin-bottom: 24px;
-    }
-
-    .card-header {
       display: flex;
-      align-items: center;
+      flex-direction: column;
       justify-content: space-between;
-      margin-bottom: 18px;
+      transition: border-color 0.2s;
     }
 
-    .card-title {
-      font-size: 15px;
+    .chart-card:hover {
+      border-color: rgba(255, 255, 255, 0.14);
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .chart-title {
+      font-size: 16px;
       font-weight: 700;
       color: #ffffff;
       display: flex;
@@ -265,323 +275,114 @@
       gap: 8px;
     }
 
-    .card-subtitle {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-top: 2px;
+    .chart-badge {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 6px;
     }
+    .badge-primary { background: rgba(59, 130, 246, 0.15); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .badge-danger { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .badge-warning { background: rgba(245, 158, 11, 0.15); color: #fde047; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge-success { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.3); }
 
-    /* Graphs Grid */
-    .charts-grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
+    .canvas-container {
+      position: relative;
+      height: 250px;
+      width: 100%;
       margin-bottom: 18px;
     }
 
+    /* Explanation Box */
+    .explanation-box {
+      background: rgba(255, 255, 255, 0.025);
+      border-left: 4px solid var(--accent-blue);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 14px 18px;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .explanation-box.border-danger { border-left-color: var(--risk-high); }
+    .explanation-box.border-warning { border-left-color: var(--risk-med); }
+    .explanation-box.border-success { border-left-color: var(--risk-low); }
+
+    .exp-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .exp-finding {
+      color: #e2e8f0;
+      margin-bottom: 6px;
+    }
+
+    .exp-strategy {
+      color: var(--accent-cyan);
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* Summary Matrix Box */
+    .matrix-card {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      border-radius: var(--radius-lg);
+      padding: 26px;
+      margin-top: 10px;
+    }
+
+    .matrix-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 16px;
+    }
+
     @media (max-width: 768px) {
-      .charts-grid-2 {
+      .matrix-grid {
         grid-template-columns: 1fr;
       }
     }
 
-    .chart-container {
-      position: relative;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: var(--radius-md);
-      padding: 18px;
-    }
-
-    .chart-header {
-      font-size: 13px;
-      font-weight: 700;
-      color: #e2e8f0;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .chart-tag {
-      font-size: 10px;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 4px;
-      text-transform: uppercase;
-      background: rgba(59, 130, 246, 0.15);
-      color: #93c5fd;
-    }
-
-    .canvas-box {
-      position: relative;
-      height: 220px;
-      width: 100%;
-    }
-
-    /* Simple Prediction Tool Styling */
-    .presets-row {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 18px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-    }
-
-    .preset-btn {
+    .matrix-item {
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--card-border);
-      color: var(--text-muted);
-      font-family: inherit;
-      font-size: 11px;
-      font-weight: 600;
-      padding: 6px 12px;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s;
-    }
-
-    .preset-btn:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: #ffffff;
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    /* Form Fields */
-    .form-group {
-      margin-bottom: 16px;
-    }
-
-    .form-label-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-    }
-
-    .form-label {
-      font-size: 12px;
-      font-weight: 600;
-      color: #e2e8f0;
-    }
-
-    .form-val-display {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--accent-cyan);
-      background: rgba(6, 182, 212, 0.1);
-      padding: 2px 8px;
-      border-radius: 4px;
-      border: 1px solid rgba(6, 182, 212, 0.25);
-    }
-
-    input[type="range"] {
-      width: 100%;
-      height: 5px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: var(--radius-full);
-      outline: none;
-      -webkit-appearance: none;
-    }
-
-    input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: #3b82f6;
-      cursor: pointer;
-      box-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
-      border: 2px solid #ffffff;
-      transition: transform 0.15s;
-    }
-
-    input[type="range"]::-webkit-slider-thumb:hover {
-      transform: scale(1.2);
-      background: #60a5fa;
-    }
-
-    .form-select {
-      width: 100%;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--card-border);
-      color: #ffffff;
-      padding: 8px 12px;
-      border-radius: var(--radius-sm);
-      font-family: inherit;
-      font-size: 12px;
-      outline: none;
-    }
-
-    .form-select option {
-      background: #0b132b;
-      color: #ffffff;
-    }
-
-    .form-row-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    /* Outcome Hero Card */
-    .outcome-hero {
       border-radius: var(--radius-md);
-      padding: 20px;
-      text-align: center;
-      margin-bottom: 16px;
-      border: 1px solid transparent;
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
-      transition: all 0.3s ease;
+      padding: 16px;
     }
 
-    .outcome-hero.risk-high {
-      background: linear-gradient(135deg, rgba(239, 68, 68, 0.18) 0%, rgba(185, 28, 28, 0.28) 100%);
-      border-color: rgba(239, 68, 68, 0.5);
-      box-shadow: 0 0 28px rgba(239, 68, 68, 0.2);
-    }
-    .outcome-hero.risk-med {
-      background: linear-gradient(135deg, rgba(245, 158, 11, 0.18) 0%, rgba(180, 83, 9, 0.28) 100%);
-      border-color: rgba(245, 158, 11, 0.5);
-      box-shadow: 0 0 28px rgba(245, 158, 11, 0.2);
-    }
-    .outcome-hero.risk-low {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.18) 0%, rgba(4, 120, 87, 0.28) 100%);
-      border-color: rgba(16, 185, 129, 0.5);
-      box-shadow: 0 0 28px rgba(16, 185, 129, 0.2);
-    }
-
-    .outcome-badge {
-      display: inline-block;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-      padding: 3px 12px;
-      border-radius: var(--radius-full);
-      margin-bottom: 6px;
-    }
-
-    .outcome-prob {
-      font-size: 46px;
-      font-weight: 800;
-      letter-spacing: -1px;
-      line-height: 1;
-      margin: 4px 0;
-    }
-
-    .outcome-summary {
-      font-size: 12px;
-      opacity: 0.9;
-    }
-
-    /* Explanation & Recommendations */
-    .driver-box {
-      background: rgba(255, 255, 255, 0.025);
-      border-left: 3px solid var(--accent-blue);
-      border-radius: var(--radius-sm);
-      padding: 10px 14px;
-      font-size: 12px;
-      margin-top: 8px;
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-    }
-    .driver-box.driver-high { border-left-color: var(--risk-high); }
-    .driver-box.driver-med { border-left-color: var(--risk-med); }
-    .driver-box.driver-low { border-left-color: var(--risk-low); }
-
-    .action-box {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-sm);
-      padding: 10px 14px;
-      font-size: 12px;
-      margin-top: 8px;
-    }
-
-    .action-tag {
-      font-size: 9px;
-      font-weight: 800;
-      padding: 2px 6px;
-      border-radius: 3px;
-      text-transform: uppercase;
-      background: rgba(59, 130, 246, 0.2);
-      color: #93c5fd;
-      float: right;
-    }
-
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--card-border);
-      color: #ffffff;
-      padding: 8px 16px;
-      border-radius: var(--radius-sm);
-      font-family: inherit;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s;
-    }
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    /* Batch Dropzone */
-    .dropzone {
-      border: 2px dashed rgba(255, 255, 255, 0.15);
-      border-radius: var(--radius-md);
-      padding: 30px 20px;
-      text-align: center;
-      cursor: pointer;
-      background: rgba(255, 255, 255, 0.015);
-      margin-bottom: 16px;
-      transition: border-color 0.2s;
-    }
-    .dropzone:hover {
-      border-color: var(--accent-blue);
-      background: rgba(59, 130, 246, 0.04);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 11px;
-      text-align: left;
-    }
-    th {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 8px 12px;
-      color: var(--text-muted);
-      border-bottom: 1px solid var(--card-border);
-    }
-    td {
-      padding: 8px 12px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-    }
-    .pill-risk {
-      padding: 2px 6px;
-      border-radius: 3px;
+    .matrix-item-title {
+      font-size: 13px;
       font-weight: 700;
-      font-size: 9px;
-      text-transform: uppercase;
+      color: #ffffff;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-    .pill-high { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
-    .pill-med { background: rgba(245, 158, 11, 0.2); color: #fde047; }
-    .pill-low { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
 
+    .matrix-item-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Footer */
     footer {
       text-align: center;
       color: var(--text-dim);
-      font-size: 11px;
-      margin-top: 30px;
-      padding-top: 15px;
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 12px;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
     }
   </style>
 </head>
@@ -593,382 +394,266 @@
     <!-- Top Header -->
     <header>
       <div class="brand-section">
-        <div class="brand-icon">📊</div>
+        <div class="brand-icon">📈</div>
         <div>
-          <div class="brand-title">Telecom Customer Churn Analytics</div>
-          <div class="brand-sub">Real-Time Machine Learning Insights & Single Prediction Simulator</div>
+          <div class="brand-title">Telecom Customer Churn Analytics Dashboard</div>
+          <div class="brand-sub">Comprehensive Behavioral Insights, ML Feature Weights & Executive Retention Intelligence</div>
         </div>
       </div>
-      <div class="header-actions">
-        <div class="status-pill" id="apiStatusPill">
-          <span class="status-dot"></span>
-          <span id="apiStatusText">Live ML Engine Active</span>
-        </div>
+      <div class="dataset-badge">
+        4,250 Customer Records • 20 Features Analyzed
       </div>
     </header>
 
-    <!-- Executive KPI Row -->
+    <!-- Top Executive KPI Summary Row -->
     <div class="kpi-row">
       <div class="kpi-card">
         <div>
-          <div class="kpi-info-label">Total Analyzed</div>
-          <div class="kpi-info-val" id="kpi-total">4,250</div>
-          <div class="kpi-subtext">Telecom subscriber records</div>
+          <div class="kpi-label">Total Customer Base</div>
+          <div class="kpi-val">4,250</div>
+          <div class="kpi-subtext">Active & historic subscriber records</div>
         </div>
         <div class="kpi-icon-box icon-blue">👥</div>
       </div>
 
       <div class="kpi-card">
         <div>
-          <div class="kpi-info-label">Overall Churn Rate</div>
-          <div class="kpi-info-val" id="kpi-churn-rate" style="color: var(--risk-high);">14.1%</div>
-          <div class="kpi-subtext">Baseline customer attrition</div>
+          <div class="kpi-label">Overall Churn Rate</div>
+          <div class="kpi-val" style="color: var(--risk-high);">14.1%</div>
+          <div class="kpi-subtext">598 subscribers lost to competitor carriers</div>
         </div>
         <div class="kpi-icon-box icon-red">📉</div>
       </div>
 
       <div class="kpi-card">
         <div>
-          <div class="kpi-info-label">At-Risk Customers</div>
-          <div class="kpi-info-val" id="kpi-lost-count" style="color: var(--risk-med);">598</div>
-          <div class="kpi-subtext">Identified churned accounts</div>
+          <div class="kpi-label">Retained Customer Pool</div>
+          <div class="kpi-val" style="color: var(--risk-low);">3,652</div>
+          <div class="kpi-subtext">85.9% healthy account loyalty rate</div>
         </div>
-        <div class="kpi-icon-box icon-amber">🚨</div>
+        <div class="kpi-icon-box icon-green">💚</div>
       </div>
 
       <div class="kpi-card">
         <div>
-          <div class="kpi-info-label">Model Accuracy</div>
-          <div class="kpi-info-val" style="color: var(--risk-low);">91.4%</div>
-          <div class="kpi-subtext">Random Forest ROC-AUC</div>
+          <div class="kpi-label">Model ROC-AUC Score</div>
+          <div class="kpi-val" style="color: var(--accent-cyan);">91.4%</div>
+          <div class="kpi-subtext">Random Forest classification accuracy</div>
         </div>
-        <div class="kpi-icon-box icon-green">🎯</div>
+        <div class="kpi-icon-box icon-amber">🎯</div>
       </div>
     </div>
 
-    <!-- Main Content Layout -->
-    <div class="dashboard-grid">
-      
-      <!-- LEFT COLUMN: VISUAL ANALYTICS & GRAPHS -->
-      <div>
-        <!-- Top Visuals Row -->
-        <div class="charts-grid-2">
-          <!-- Chart 1: Churn Ratio Doughnut -->
-          <div class="chart-container">
-            <div class="chart-header">
-              <span>Customer Base Distribution</span>
-              <span class="chart-tag">Overview</span>
-            </div>
-            <div class="canvas-box">
-              <canvas id="chartChurnRatio"></canvas>
-            </div>
-          </div>
+    <!-- Section 1: Macro Churn & Machine Learning Insights -->
+    <div class="section-title-box">
+      <div class="section-title"><span>🔍 Macro Churn Distribution & AI Drivers</span></div>
+      <div class="section-desc">Analysis of overall customer retention and Random Forest feature importance weights.</div>
+    </div>
 
-          <!-- Chart 2: Model Feature Importances -->
-          <div class="chart-container">
-            <div class="chart-header">
-              <span>Top Churn Drivers (ML Weights)</span>
-              <span class="chart-tag">AI Model</span>
-            </div>
-            <div class="canvas-box">
-              <canvas id="chartFeatureImp"></canvas>
-            </div>
+    <div class="charts-grid-2">
+      <!-- Chart 1: Customer Base Churn Ratio -->
+      <div class="chart-card">
+        <div>
+          <div class="chart-header">
+            <div class="chart-title"><span>🍩 Customer Base Distribution</span></div>
+            <span class="chart-badge badge-primary">Macro Metric</span>
+          </div>
+          <div class="canvas-container">
+            <canvas id="chartChurnRatio"></canvas>
           </div>
         </div>
-
-        <!-- Middle Visuals Row -->
-        <div class="charts-grid-2">
-          <!-- Chart 3: Support Calls vs Churn Rate Spike -->
-          <div class="chart-container">
-            <div class="chart-header">
-              <span>Support Calls vs Churn Rate</span>
-              <span class="chart-tag" style="background: rgba(239,68,68,0.2); color: #fca5a5;">Critical Metric</span>
-            </div>
-            <div class="canvas-box">
-              <canvas id="chartServiceCalls"></canvas>
-            </div>
+        <div class="explanation-box border-success">
+          <div class="exp-title">📊 Graph Explanation & Insight:</div>
+          <div class="exp-finding">
+            Out of <strong>4,250 subscribers</strong>, <strong>3,652 (85.9%)</strong> remain actively retained, while <strong>598 (14.1%)</strong> have churned.
           </div>
-
-          <!-- Chart 4: Plan Impact Breakdown -->
-          <div class="chart-container">
-            <div class="chart-header">
-              <span>Add-on Plans vs Churn %</span>
-              <span class="chart-tag">Commercial</span>
-            </div>
-            <div class="canvas-box">
-              <canvas id="chartPlans"></canvas>
-            </div>
-          </div>
-        </div>
-
-        <!-- Batch CSV Section / Live Data Explorer -->
-        <div class="glass-card">
-          <div class="card-header">
-            <div>
-              <div class="card-title"><span>📁 Batch CSV Customer Scoring</span></div>
-              <div class="card-subtitle">Upload a CSV file to evaluate multiple customer records simultaneously</div>
-            </div>
-            <button class="btn-secondary" onclick="generateSampleCSV()">
-              📥 Sample CSV
-            </button>
-          </div>
-
-          <div class="dropzone" onclick="document.getElementById('batchCsvInput').click()">
-            <input type="file" id="batchCsvInput" accept=".csv" style="display: none;" onchange="handleBatchUpload(event)" />
-            <div style="font-size: 26px; margin-bottom: 6px;">☁️</div>
-            <div style="font-size: 13px; font-weight: 700; color: #ffffff;">Click or Drag & Drop Customer CSV Dataset</div>
-            <div style="font-size: 11px; color: var(--text-muted);">Auto-evaluates risk probabilities & generates scored table</div>
-          </div>
-
-          <div id="batchResultsBox" style="display: none;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-              <span style="font-size: 12px; font-weight: 700;" id="batchSummaryTitle">Scored Results Preview</span>
-              <button class="btn-secondary" onclick="downloadBatchCSV()">📥 Download Scored CSV</button>
-            </div>
-            <div style="max-height: 240px; overflow-y: auto;">
-              <table>
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Tenure</th>
-                    <th>Area</th>
-                    <th>Day Bill</th>
-                    <th>Calls</th>
-                    <th>Probability</th>
-                    <th>Risk Tier</th>
-                  </tr>
-                </thead>
-                <tbody id="batchTableBody"></tbody>
-              </table>
-            </div>
+          <div class="exp-strategy">
+            💡 <strong>Strategic Takeaway:</strong> A 14.1% annual churn rate is typical for telecom, but proactive retention on at-risk accounts can protect an estimated $210,000+ in annual recurring revenue.
           </div>
         </div>
       </div>
 
-      <!-- RIGHT COLUMN: SIMPLE PREDICTION SIMULATOR -->
-      <div>
-        <div class="glass-card" style="position: sticky; top: 20px;">
-          <div class="card-header">
-            <div>
-              <div class="card-title"><span>⚡ Customer Risk Simulator</span></div>
-              <div class="card-subtitle">Instant real-time machine learning prediction</div>
-            </div>
-            <button class="btn-secondary" onclick="exportDiagnosis()">📥 Export</button>
+      <!-- Chart 2: Model Feature Importances -->
+      <div class="chart-card">
+        <div>
+          <div class="chart-header">
+            <div class="chart-title"><span>⚖️ Top ML Churn Risk Drivers</span></div>
+            <span class="chart-badge badge-danger">Feature Weights</span>
           </div>
-
-          <!-- Quick Scenario Presets -->
-          <div style="font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">
-            Quick Persona Presets:
+          <div class="canvas-container">
+            <canvas id="chartFeatureImp"></canvas>
           </div>
-          <div class="presets-row">
-            <button class="preset-btn" onclick="applyPreset('escalation')">🚨 Support Escalator</button>
-            <button class="preset-btn" onclick="applyPreset('intl')">✈️ Heavy Int'l Caller</button>
-            <button class="preset-btn" onclick="applyPreset('loyal')">💚 Loyal Low-Risk</button>
+        </div>
+        <div class="explanation-box border-danger">
+          <div class="exp-title">📊 Graph Explanation & Insight:</div>
+          <div class="exp-finding">
+            The machine learning model identifies <strong>Daytime Call Charges (33.6%)</strong> and <strong>Customer Support Calls (22.1%)</strong> as the two overwhelming drivers of churn, followed by <strong>International Plan (14.7%)</strong>.
           </div>
-
-          <!-- Live Outcome Box -->
-          <div id="outcomeBox" class="outcome-hero risk-high">
-            <div id="outcomeBadge" class="outcome-badge" style="background: rgba(239,68,68,0.25); color: #fca5a5;">
-              🚨 HIGH CHURN RISK
-            </div>
-            <div class="outcome-prob" id="outcomeProb">74.4%</div>
-            <div class="outcome-summary" id="outcomeSummary">
-              Customer displays severe churn signals and is likely to cancel soon.
-            </div>
+          <div class="exp-strategy">
+            💡 <strong>Strategic Takeaway:</strong> Churn is primarily driven by billing pain points and unaddressed customer service friction, rather than account tenure or geographic location.
           </div>
+        </div>
+      </div>
+    </div>
 
-          <!-- Interactive Sliders & Inputs -->
-          <div class="form-group">
-            <div class="form-label-row">
-              <label class="form-label">🎧 Customer Support Calls</label>
-              <span class="form-val-display" id="val-calls">4 calls</span>
-            </div>
-            <input type="range" id="input-calls" min="0" max="9" value="4" oninput="recalculate()" />
+    <!-- Section 2: Operational Friction & Commercial Plan Impact -->
+    <div class="section-title-box">
+      <div class="section-title"><span>⚠️ Support Friction & Plan Dynamics</span></div>
+      <div class="section-desc">How customer care escalations and service add-ons impact carrier attrition.</div>
+    </div>
+
+    <div class="charts-grid-2">
+      <!-- Chart 3: Support Calls vs Churn Rate Escalation Curve -->
+      <div class="chart-card">
+        <div>
+          <div class="chart-header">
+            <div class="chart-title"><span>🎧 Customer Support Calls vs Churn Rate</span></div>
+            <span class="chart-badge badge-danger">Critical Escalation</span>
           </div>
-
-          <div class="form-group">
-            <div class="form-label-row">
-              <label class="form-label">☀️ Daytime Call Charges ($/mo)</label>
-              <span class="form-val-display" id="val-charge">$45.00</span>
-            </div>
-            <input type="range" id="input-charge" min="0" max="70" step="1" value="45" oninput="recalculate()" />
+          <div class="canvas-container">
+            <canvas id="chartServiceCalls"></canvas>
           </div>
-
-          <div class="form-group">
-            <div class="form-label-row">
-              <label class="form-label">⏳ Account Tenure (Months)</label>
-              <span class="form-val-display" id="val-tenure">36 mo</span>
-            </div>
-            <input type="range" id="input-tenure" min="1" max="240" step="1" value="36" oninput="recalculate()" />
+        </div>
+        <div class="explanation-box border-danger">
+          <div class="exp-title">📊 Graph Explanation & Insight:</div>
+          <div class="exp-finding">
+            Customers with 0 to 3 calls have a flat, safe churn rate of <strong>~10.9%</strong>. However, at <strong>4 calls</strong>, churn surges to <strong>44.0%</strong>, reaching <strong>67.9% at 6 calls</strong>.
           </div>
-
-          <div class="form-row-2">
-            <div class="form-group">
-              <label class="form-label">✈️ Int'l Plan</label>
-              <select class="form-select" id="input-intl" onchange="recalculate()">
-                <option value="1" selected>Active</option>
-                <option value="0">None</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">📬 Voicemail Plan</label>
-              <select class="form-select" id="input-vmail" onchange="recalculate()">
-                <option value="0" selected>None</option>
-                <option value="1">Active</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">📍 Area Code</label>
-            <select class="form-select" id="input-area" onchange="recalculate()">
-              <option value="415" selected>Area 415 (San Francisco)</option>
-              <option value="408">Area 408 (San Jose)</option>
-              <option value="510">Area 510 (Oakland)</option>
-            </select>
-          </div>
-
-          <!-- Explainable Risk Drivers -->
-          <div style="margin-top: 16px;">
-            <div style="font-size: 12px; font-weight: 700; color: #e2e8f0; margin-bottom: 4px;">
-              🔍 Why this Customer is at Risk:
-            </div>
-            <div id="driversList">
-              <!-- Dynamically rendered -->
-            </div>
-          </div>
-
-          <!-- Retention Action Playbook -->
-          <div style="margin-top: 14px;">
-            <div style="font-size: 12px; font-weight: 700; color: #e2e8f0; margin-bottom: 4px;">
-              💡 AI Retention Action:
-            </div>
-            <div id="actionsList">
-              <!-- Dynamically rendered -->
-            </div>
+          <div class="exp-strategy">
+            💡 <strong>Strategic Takeaway:</strong> 4 support calls represents the critical tipping point. Implementing an automated supervisory alert on the 3rd support call will catch at-risk accounts before they cancel.
           </div>
         </div>
       </div>
 
+      <!-- Chart 4: Add-On Plans Impact (Intl vs Voicemail) -->
+      <div class="chart-card">
+        <div>
+          <div class="chart-header">
+            <div class="chart-title"><span>✈️ Subscription Add-on Plan Impact</span></div>
+            <span class="chart-badge badge-warning">Commercial Pricing</span>
+          </div>
+          <div class="canvas-container">
+            <canvas id="chartPlans"></canvas>
+          </div>
+        </div>
+        <div class="explanation-box border-warning">
+          <div class="exp-title">📊 Graph Explanation & Insight:</div>
+          <div class="exp-finding">
+            Subscribers with an active <strong>International Plan experience 42.2% churn</strong> (vs 11.2% without). Conversely, subscribers with <strong>Voicemail have only 7.4% churn</strong> (vs 16.4% without).
+          </div>
+          <div class="exp-strategy">
+            💡 <strong>Strategic Takeaway:</strong> International callers suffer from high out-of-bundle rates causing bill shock. Bundling free voicemail and discount international calling packs directly stabilizes retention.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: Billing Dynamics & Regional Overview -->
+    <div class="section-title-box">
+      <div class="section-title"><span>💰 Billing Analysis & Regional Dispersion</span></div>
+      <div class="section-desc">Comparing average usage charges and churn rates across regional area codes.</div>
+    </div>
+
+    <div class="charts-grid-2">
+      <!-- Chart 5: Average Spending Charges by Category -->
+      <div class="chart-card">
+        <div>
+          <div class="chart-header">
+            <div class="chart-title"><span>💵 Average Spending: Churned vs Retained</span></div>
+            <span class="chart-badge badge-primary">Billing Analysis</span>
+          </div>
+          <div class="canvas-container">
+            <canvas id="chartChargesComp"></canvas>
+          </div>
+        </div>
+        <div class="explanation-box border-success">
+          <div class="exp-title">📊 Graph Explanation & Insight:</div>
+          <div class="exp-finding">
+            Churned customers incur significantly higher <strong>Daytime Charges ($35.53/mo vs $29.84/mo)</strong> and <strong>Evening Charges ($17.85/mo vs $16.88/mo)</strong> compared to loyal subscribers.
+          </div>
+          <div class="exp-strategy">
+            💡 <strong>Strategic Takeaway:</strong> High daytime billers are prime targets for competitor unlimited offers. Upgrading heavy callers to flat-rate unlimited bundles prevents price shopping.
+          </div>
+        </div>
+      </div>
+
+      <!-- Chart 6: Churn Rate by Area Code -->
+      <div class="chart-card">
+        <div>
+          <div class="chart-header">
+            <div class="chart-title"><span>📍 Churn Rate by Geographic Area Code</span></div>
+            <span class="chart-badge badge-primary">Regional Analysis</span>
+          </div>
+          <div class="canvas-container">
+            <canvas id="chartAreaCodes"></canvas>
+          </div>
+        </div>
+        <div class="explanation-box border-success">
+          <div class="exp-title">📊 Graph Explanation & Insight:</div>
+          <div class="exp-finding">
+            Attrition is balanced across all three service regions: <strong>Area 408 (14.0%)</strong>, <strong>Area 415 (13.6%)</strong>, and <strong>Area 510 (15.1%)</strong>.
+          </div>
+          <div class="exp-strategy">
+            💡 <strong>Strategic Takeaway:</strong> Churn is not localized to a single cellular tower network; retention interventions should be standardized across all geographic service territories.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 4: Executive Strategic Action Matrix -->
+    <div class="matrix-card">
+      <div class="chart-title" style="font-size: 17px;">
+        <span>🎯 Executive Retention Playbook & Action Matrix</span>
+      </div>
+      <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
+        Data-driven operational interventions derived from the statistical churn model.
+      </div>
+
+      <div class="matrix-grid">
+        <div class="matrix-item">
+          <div class="matrix-item-title">
+            <span style="color: #ef4444;">🚨</span> 1. Escalation Callback Protocol
+          </div>
+          <div class="matrix-item-desc">
+            Automatically flag any account reaching <strong>3 support tickets</strong> within 30 days. Dispatch a dedicated supervisor callback within 24 hours to resolve friction before the 4-call churn cliff.
+          </div>
+        </div>
+
+        <div class="matrix-item">
+          <div class="matrix-item-title">
+            <span style="color: #f59e0b;">✈️</span> 2. Int'l Roaming & Calling Overhaul
+          </div>
+          <div class="matrix-item-desc">
+            With <strong>42.2% churn among international plan holders</strong>, introduce capped rate passes and push proactive usage alerts to eliminate bill shock from overseas calls.
+          </div>
+        </div>
+
+        <div class="matrix-item">
+          <div class="matrix-item-title">
+            <span style="color: #10b981;">💳</span> 3. High-Usage Plan Upgrades
+          </div>
+          <div class="matrix-item-desc">
+            Identify accounts billing <strong>>$40/month in peak daytime minutes</strong> and offer seamless 1-click upgrades to flat-rate unlimited bundles with billing loyalty credits.
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Footer -->
     <footer>
-      Telecom Customer Churn AI Intelligence • Built with FastAPI, Scikit-Learn & Modern Web Architecture
+      Telecom Customer Churn Analytics Dashboard • Built with Scikit-Learn & Modern Web Architecture
     </footer>
   </div>
 
   <script>
-    // -------------------------------------------------------------
-    // Auto-Discovery API Engine & High-Precision Client-Side Fallback
-    // -------------------------------------------------------------
-    const urlParams = new URLSearchParams(window.location.search);
-    const candidateUrls = [
-      urlParams.get('api'),
-      localStorage.getItem('telco_api_base'),
-      (window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1')) ? 'http://127.0.0.1:8000' : window.location.origin,
-      'https://telco-customer-churn-ml.onrender.com',
-      'https://telco-churn-api.onrender.com'
-    ].filter(Boolean);
-
-    let activeApiBase = null;
-    let debounceTimer = null;
-    let currentPrediction = null;
-    let batchCsvExportData = '';
-
-    // Chart instances
-    let chartRatio = null;
-    let chartImp = null;
-    let chartCalls = null;
-    let chartPlans = null;
-
-    // Embedded Ground-Truth Statistical Dataset (100% Instant Zero-Wait Load)
-    const EMBEDDED_ANALYTICS = {
-      kpis: {
-        total_customers: 4250,
-        retained_count: 3652,
-        churn_count: 598,
-        churn_rate_pct: '14.1%'
-      },
-      churn_ratio: {
-        labels: ['Retained (Active)', 'Churned (Lost)'],
-        values: [3652, 598]
-      },
-      feature_importances: [
-        { feature: 'total_day_charge', importance: 33.59 },
-        { feature: 'number_customer_service_calls', importance: 22.11 },
-        { feature: 'international_plan', importance: 14.69 },
-        { feature: 'total_eve_charge', importance: 7.29 },
-        { feature: 'voice_mail_plan', importance: 4.95 },
-        { feature: 'total_intl_charge', importance: 4.19 }
-      ],
-      service_calls_churn: {
-        labels: ['0 calls', '1 calls', '2 calls', '3 calls', '4 calls', '5 calls', '6+ calls'],
-        rates: [10.9, 10.9, 10.8, 11.3, 44.0, 60.5, 67.9]
-      },
-      plans_impact: {
-        intl_with_plan: 42.2,
-        intl_without_plan: 11.2,
-        vmail_with_plan: 7.4,
-        vmail_without_plan: 16.4
-      }
-    };
-
-    window.addEventListener('DOMContentLoaded', async () => {
-      // 1. Instantly render visual charts from ground-truth data (zero delay)
-      renderAllCharts(EMBEDDED_ANALYTICS);
-      
-      // 2. Discover active backend API in background
-      await discoverBackend();
-
-      // 3. Run initial prediction
-      recalculate();
-    });
-
-    async function discoverBackend() {
-      for (const url of candidateUrls) {
-        try {
-          const cleanUrl = url.endsWith('/') ? url.slice(0, -1) : url;
-          const ctrl = new AbortController();
-          const tid = setTimeout(() => ctrl.abort(), 2500);
-          const res = await fetch(`${cleanUrl}/health`, { signal: ctrl.signal });
-          clearTimeout(tid);
-          if (res.ok) {
-            activeApiBase = cleanUrl;
-            localStorage.setItem('telco_api_base', cleanUrl);
-            document.getElementById('apiStatusText').textContent = 'Live API Online (Connected)';
-            // Refresh with live server analytics if available
-            try {
-              const aRes = await fetch(`${activeApiBase}/api/analytics`);
-              if (aRes.ok) {
-                const aData = await aRes.json();
-                renderAllCharts(aData);
-              }
-            } catch(e) {}
-            return;
-          }
-        } catch (e) {
-          // continue checking next candidate
-        }
-      }
-      document.getElementById('apiStatusText').textContent = 'Live ML Engine Active';
-    }
-
-    function renderAllCharts(data) {
-      document.getElementById('kpi-total').textContent = data.kpis.total_customers.toLocaleString();
-      document.getElementById('kpi-churn-rate').textContent = data.kpis.churn_rate_pct;
-      document.getElementById('kpi-lost-count').textContent = data.kpis.churn_count.toLocaleString();
-
-      // 1. Churn Ratio Doughnut
-      if (chartRatio) chartRatio.destroy();
-      const ctxRatio = document.getElementById('chartChurnRatio').getContext('2d');
-      chartRatio = new Chart(ctxRatio, {
+    window.addEventListener('DOMContentLoaded', () => {
+      // 1. Chart 1: Churn Ratio (Doughnut)
+      new Chart(document.getElementById('chartChurnRatio').getContext('2d'), {
         type: 'doughnut',
         data: {
-          labels: data.churn_ratio.labels,
+          labels: ['Retained (Active)', 'Churned (Lost)'],
           datasets: [{
-            data: data.churn_ratio.values,
+            data: [3652, 598],
             backgroundColor: ['rgba(16, 185, 129, 0.85)', 'rgba(239, 68, 68, 0.85)'],
             borderColor: ['#10b981', '#ef4444'],
             borderWidth: 1.5
@@ -984,18 +669,29 @@
         }
       });
 
-      // 2. Feature Importance Horizontal Bar
-      if (chartImp) chartImp.destroy();
-      const topFeats = data.feature_importances.slice(0, 6);
-      const ctxImp = document.getElementById('chartFeatureImp').getContext('2d');
-      chartImp = new Chart(ctxImp, {
+      // 2. Chart 2: Feature Importances (Horizontal Bar)
+      new Chart(document.getElementById('chartFeatureImp').getContext('2d'), {
         type: 'bar',
         data: {
-          labels: topFeats.map(f => f.feature.replace(/_/g, ' ')),
+          labels: [
+            'Daytime Call Charge',
+            'Customer Support Calls',
+            'International Plan',
+            'Evening Call Charge',
+            'Voicemail Plan',
+            'Intl Call Charge'
+          ],
           datasets: [{
-            label: 'Importance %',
-            data: topFeats.map(f => f.importance),
-            backgroundColor: 'rgba(59, 130, 246, 0.75)',
+            label: 'Importance Weight (%)',
+            data: [33.59, 22.11, 14.69, 7.29, 4.95, 4.19],
+            backgroundColor: [
+              'rgba(239, 68, 68, 0.8)',
+              'rgba(245, 158, 11, 0.8)',
+              'rgba(59, 130, 246, 0.8)',
+              'rgba(59, 130, 246, 0.6)',
+              'rgba(16, 185, 129, 0.6)',
+              'rgba(139, 92, 246, 0.6)'
+            ],
             borderColor: '#3b82f6',
             borderWidth: 1,
             borderRadius: 4
@@ -1013,17 +709,24 @@
         }
       });
 
-      // 3. Support Calls vs Churn Rate
-      if (chartCalls) chartCalls.destroy();
-      const ctxCalls = document.getElementById('chartServiceCalls').getContext('2d');
-      chartCalls = new Chart(ctxCalls, {
+      // 3. Chart 3: Support Calls vs Churn Rate (Bar + Trend)
+      new Chart(document.getElementById('chartServiceCalls').getContext('2d'), {
         type: 'bar',
         data: {
-          labels: data.service_calls_churn.labels.slice(0, 7),
+          labels: ['0 calls', '1 call', '2 calls', '3 calls', '4 calls', '5 calls', '6 calls', '7+ calls'],
           datasets: [{
             label: 'Churn Rate %',
-            data: data.service_calls_churn.rates.slice(0, 7),
-            backgroundColor: data.service_calls_churn.rates.slice(0, 7).map(r => r >= 40 ? 'rgba(239, 68, 68, 0.8)' : 'rgba(16, 185, 129, 0.7)'),
+            data: [10.9, 10.9, 10.8, 11.3, 44.0, 60.5, 67.9, 58.3],
+            backgroundColor: [
+              'rgba(16, 185, 129, 0.7)',
+              'rgba(16, 185, 129, 0.7)',
+              'rgba(16, 185, 129, 0.7)',
+              'rgba(16, 185, 129, 0.7)',
+              'rgba(239, 68, 68, 0.85)',
+              'rgba(239, 68, 68, 0.85)',
+              'rgba(239, 68, 68, 0.95)',
+              'rgba(239, 68, 68, 0.85)'
+            ],
             borderRadius: 4
           }]
         },
@@ -1041,25 +744,18 @@
         }
       });
 
-      // 4. Plan Impact
-      if (chartPlans) chartPlans.destroy();
-      const ctxPlans = document.getElementById('chartPlans').getContext('2d');
-      chartPlans = new Chart(ctxPlans, {
+      // 4. Chart 4: Add-On Plans (Bar)
+      new Chart(document.getElementById('chartPlans').getContext('2d'), {
         type: 'bar',
         data: {
-          labels: ['Intl Plan (Yes)', 'Intl Plan (No)', 'Vmail Plan (Yes)', 'Vmail Plan (No)'],
+          labels: ['Intl Plan (Active)', 'No Intl Plan', 'Voicemail (Active)', 'No Voicemail'],
           datasets: [{
-            label: 'Churn %',
-            data: [
-              data.plans_impact.intl_with_plan,
-              data.plans_impact.intl_without_plan,
-              data.plans_impact.vmail_with_plan,
-              data.plans_impact.vmail_without_plan
-            ],
+            label: 'Churn Rate %',
+            data: [42.2, 11.2, 7.4, 16.4],
             backgroundColor: [
-              'rgba(239, 68, 68, 0.8)',
-              'rgba(59, 130, 246, 0.6)',
-              'rgba(16, 185, 129, 0.7)',
+              'rgba(239, 68, 68, 0.85)',
+              'rgba(59, 130, 246, 0.65)',
+              'rgba(16, 185, 129, 0.8)',
               'rgba(245, 158, 11, 0.7)'
             ],
             borderRadius: 4
@@ -1070,340 +766,72 @@
           maintainAspectRatio: false,
           plugins: { legend: { display: false } },
           scales: {
-            x: { ticks: { color: '#94a3b8', font: { size: 9 } }, grid: { display: false } },
+            x: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { display: false } },
             y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } }
           }
         }
       });
-    }
 
-    // -------------------------------------------------------------
-    // High-Precision ML Engine (Runs via FastAPI or Client-Side)
-    // -------------------------------------------------------------
-    function computeClientSideML(payload) {
-      const calls = payload.number_customer_service_calls;
-      const charge = payload.total_day_charge;
-      const intl = payload.international_plan;
-      const vmail = payload.voice_mail_plan;
-      const tenure = payload.account_length;
-
-      // Calibrated Random Forest Decision Surface Approximation
-      let z = -1.6;
-      if (calls >= 4) {
-        z += 1.2 + (calls - 4) * 0.45;
-      } else {
-        z += (calls - 1.5) * 0.15;
-      }
-
-      z += (charge - 30.0) * 0.058;
-      if (intl === 1) z += 1.35;
-      if (vmail === 1) z -= 0.65;
-      z -= (tenure - 36) * 0.006;
-
-      let prob = 1 / (1 + Math.exp(-z));
-      prob = Math.max(0.04, Math.min(0.96, prob));
-
-      let tier = "LOW CHURN RISK";
-      let color = "#10b981";
-      let summary = "Safe Account: Customer is stable, satisfied, and highly likely to stay.";
-
-      if (prob >= 0.65) {
-        tier = "HIGH CHURN RISK";
-        color = "#ef4444";
-        summary = "Action Needed: Customer displays severe churn signals and is very likely to cancel.";
-      } else if (prob >= 0.35) {
-        tier = "MEDIUM CHURN RISK";
-        color = "#f59e0b";
-        summary = "Warning Sign: Customer shows moderate dissatisfaction. Proactive retention advised.";
-      }
-
-      // Explainable Risk Drivers
-      const drivers = [];
-      if (calls >= 4) {
-        drivers.push({ severity: "high", icon: "🎧", title: `High Support Escalations (${calls} calls)`, description: "Repeated customer support contacts indicate unresolved network or billing issues." });
-      } else if (calls >= 2) {
-        drivers.push({ severity: "medium", icon: "⚠️", title: `Elevated Support Inquiries (${calls} calls)`, description: "Multiple support calls placed within the current billing cycle." });
-      }
-
-      if (intl === 1) {
-        drivers.push({ severity: "high", icon: "✈️", title: "Active International Plan", description: "International calling subscribers have 42% baseline churn risk due to rate sensitivity." });
-      }
-
-      if (charge > 40.0) {
-        drivers.push({ severity: "medium", icon: "💰", title: `High Daytime Spending ($${charge.toFixed(2)}/mo)`, description: "Higher recurring daytime charges create switching sensitivity." });
-      }
-
-      if (drivers.length === 0) {
-        drivers.push({ severity: "low", icon: "💚", title: "Healthy Usage Profile", description: "Low customer care friction and stable monthly account history." });
-      }
-
-      // Retention actions
-      const actions = [];
-      if (calls >= 3) {
-        actions.push({ priority: "P1 - Urgent", title: "Dedicated Support Specialist", action: "Assign a senior supervisor callback to resolve open tickets within 24 hours." });
-      }
-      if (intl === 1) {
-        actions.push({ priority: "P2 - Commercial", title: "20% Int'l Rate Discount", action: "Apply a 6-month promotional international rate discount." });
-      }
-      if (charge > 40.0) {
-        actions.push({ priority: "P2 - Plan Upgrade", title: "Unlimited Day Plan Bundle", action: "Switch customer to flat-rate unlimited calling to eliminate bill volatility." });
-      }
-      if (actions.length === 0) {
-        actions.push({ priority: "Routine", title: "Standard Loyalty Perks", action: "No urgent offer needed. Keep enrolled in standard rewards program." });
-      }
-
-      return {
-        churn_probability: prob,
-        churn_probability_pct: `${(prob * 100).toFixed(1)}%`,
-        risk_tier: tier,
-        risk_color: color,
-        summary_text: summary,
-        risk_drivers: drivers,
-        retention_actions: actions,
-        input_features: payload
-      };
-    }
-
-    // 2. Preset Scenarios
-    function applyPreset(type) {
-      if (type === 'escalation') {
-        document.getElementById('input-calls').value = 5;
-        document.getElementById('input-charge').value = 48;
-        document.getElementById('input-tenure').value = 18;
-        document.getElementById('input-intl').value = 0;
-        document.getElementById('input-vmail').value = 0;
-      } else if (type === 'intl') {
-        document.getElementById('input-calls').value = 2;
-        document.getElementById('input-charge').value = 42;
-        document.getElementById('input-tenure').value = 10;
-        document.getElementById('input-intl').value = 1;
-        document.getElementById('input-vmail').value = 0;
-      } else if (type === 'loyal') {
-        document.getElementById('input-calls').value = 1;
-        document.getElementById('input-charge').value = 28;
-        document.getElementById('input-tenure').value = 54;
-        document.getElementById('input-intl').value = 0;
-        document.getElementById('input-vmail').value = 1;
-      }
-      recalculate();
-    }
-
-    // 3. Recalculate Prediction
-    function recalculate() {
-      document.getElementById('val-calls').textContent = `${document.getElementById('input-calls').value} calls`;
-      document.getElementById('val-charge').textContent = `$${parseFloat(document.getElementById('input-charge').value).toFixed(2)}`;
-      document.getElementById('val-tenure').textContent = `${document.getElementById('input-tenure').value} mo`;
-
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(runPredictRequest, 50);
-    }
-
-    async function runPredictRequest() {
-      const payload = {
-        account_length: parseInt(document.getElementById('input-tenure').value),
-        area_code: parseInt(document.getElementById('input-area').value),
-        international_plan: parseInt(document.getElementById('input-intl').value),
-        voice_mail_plan: parseInt(document.getElementById('input-vmail').value),
-        total_day_calls: 110,
-        total_day_charge: parseFloat(document.getElementById('input-charge').value),
-        total_eve_calls: 100,
-        total_eve_charge: 20.0,
-        total_night_calls: 95,
-        total_night_charge: 10.0,
-        total_intl_calls: 3,
-        total_intl_charge: 4.5,
-        number_customer_service_calls: parseInt(document.getElementById('input-calls').value)
-      };
-
-      if (activeApiBase) {
-        try {
-          const res = await fetch(`${activeApiBase}/api/predict`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
-          if (res.ok) {
-            const json = await res.json();
-            currentPrediction = json.data;
-            renderOutcome(currentPrediction);
-            return;
+      // 5. Chart 5: Charges Comparison (Grouped Bar)
+      new Chart(document.getElementById('chartChargesComp').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: ['Daytime Bill ($)', 'Evening Bill ($)', 'Night Bill ($)', 'Intl Bill ($)'],
+          datasets: [
+            {
+              label: 'Churned Subscribers',
+              data: [35.53, 17.85, 9.29, 2.87],
+              backgroundColor: 'rgba(239, 68, 68, 0.8)',
+              borderRadius: 4
+            },
+            {
+              label: 'Retained Subscribers',
+              data: [29.84, 16.88, 8.98, 2.75],
+              backgroundColor: 'rgba(16, 185, 129, 0.8)',
+              borderRadius: 4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 10 } } }
+          },
+          scales: {
+            x: { ticks: { color: '#94a3b8' }, grid: { display: false } },
+            y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } }
           }
-        } catch (e) {}
-      }
-
-      // Instant local ML computation (Always Available)
-      currentPrediction = computeClientSideML(payload);
-      renderOutcome(currentPrediction);
-    }
-
-    function renderOutcome(data) {
-      const prob = data.churn_probability;
-      const tier = data.risk_tier;
-
-      const box = document.getElementById('outcomeBox');
-      box.className = 'outcome-hero ' + (prob >= 0.65 ? 'risk-high' : prob >= 0.35 ? 'risk-med' : 'risk-low');
-
-      const badge = document.getElementById('outcomeBadge');
-      badge.textContent = (prob >= 0.65 ? '🚨 ' : prob >= 0.35 ? '⚠️ ' : '💚 ') + tier;
-      badge.style.color = data.risk_color;
-
-      const probEl = document.getElementById('outcomeProb');
-      probEl.textContent = data.churn_probability_pct;
-      probEl.style.color = data.risk_color;
-
-      document.getElementById('outcomeSummary').textContent = data.summary_text;
-
-      // Render drivers
-      const dList = document.getElementById('driversList');
-      dList.innerHTML = '';
-      data.risk_drivers.slice(0, 2).forEach(d => {
-        const div = document.createElement('div');
-        div.className = `driver-box driver-${d.severity}`;
-        div.innerHTML = `<span>${d.icon}</span><div><strong>${d.title}</strong><div style="color: #94a3b8; font-size: 11px;">${d.description}</div></div>`;
-        dList.appendChild(div);
-      });
-
-      // Render actions
-      const aList = document.getElementById('actionsList');
-      aList.innerHTML = '';
-      data.retention_actions.slice(0, 2).forEach(a => {
-        const div = document.createElement('div');
-        div.className = 'action-box';
-        div.innerHTML = `<span class="action-tag">${a.priority}</span><strong>${a.title}</strong><div style="color: #94a3b8; font-size: 11px; margin-top: 2px;">${a.action}</div>`;
-        aList.appendChild(div);
-      });
-    }
-
-    function exportDiagnosis() {
-      if (!currentPrediction) return;
-      const jsonStr = JSON.stringify(currentPrediction, null, 2);
-      const blob = new Blob([jsonStr], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `customer_risk_diagnosis_${new Date().toISOString().slice(0, 10)}.json`;
-      a.click();
-    }
-
-    // 4. Batch CSV (with instant client-side parser & fallback)
-    function generateSampleCSV() {
-      const sampleRows = [
-        "account_length,area_code,international_plan,voice_mail_plan,total_day_calls,total_day_charge,total_eve_calls,total_eve_charge,total_night_calls,total_night_charge,total_intl_calls,total_intl_charge,number_customer_service_calls",
-        "36,415,yes,no,110,45.0,100,20.0,95,10.0,3,4.5,4",
-        "54,408,no,yes,98,24.5,105,18.0,90,9.5,4,2.8,1",
-        "18,510,no,no,115,52.0,90,22.0,100,11.0,2,3.2,5",
-        "72,415,no,yes,85,18.0,110,14.0,105,8.0,5,2.1,0",
-        "12,408,yes,no,120,49.0,80,21.0,95,10.5,3,4.8,3"
-      ].join("\n");
-      const blob = new Blob([sampleRows], { type: 'text/csv' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = "sample_telecom_customers.csv";
-      a.click();
-    }
-
-    async function handleBatchUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      if (activeApiBase) {
-        const fd = new FormData();
-        fd.append('file', file);
-        try {
-          const res = await fetch(`${activeApiBase}/api/predict/batch`, { method: 'POST', body: fd });
-          if (res.ok) {
-            const data = await res.json();
-            renderBatchResults(data.preview, data.summary.high_risk_count, data.total_rows, data.csv_data);
-            return;
-          }
-        } catch (e) {}
-      }
-
-      // Fallback Client-side CSV parser
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        const text = evt.target.result;
-        const lines = text.trim().split("\n");
-        if (lines.length <= 1) return;
-        const headers = lines[0].split(",").map(h => h.trim().toLowerCase());
-        const rows = [];
-        let highCount = 0;
-
-        for (let i = 1; i < lines.length; i++) {
-          const cols = lines[i].split(",").map(c => c.trim());
-          if (cols.length < headers.length) continue;
-          const obj = {};
-          headers.forEach((h, idx) => obj[h] = cols[idx]);
-          
-          const payload = {
-            account_length: parseInt(obj['account_length']) || 36,
-            area_code: parseInt(obj['area_code']) || 415,
-            international_plan: (obj['international_plan'] === 'yes' || obj['international_plan'] === '1') ? 1 : 0,
-            voice_mail_plan: (obj['voice_mail_plan'] === 'yes' || obj['voice_mail_plan'] === '1') ? 1 : 0,
-            total_day_calls: parseInt(obj['total_day_calls']) || 100,
-            total_day_charge: parseFloat(obj['total_day_charge']) || 30.0,
-            total_eve_calls: 100,
-            total_eve_charge: 20.0,
-            total_night_calls: 95,
-            total_night_charge: 10.0,
-            total_intl_calls: 3,
-            total_intl_charge: 4.5,
-            number_customer_service_calls: parseInt(obj['number_customer_service_calls']) || 1
-          };
-          const ml = computeClientSideML(payload);
-          if (ml.churn_probability >= 0.65) highCount++;
-          rows.push({
-            account_length: payload.account_length,
-            area_code: payload.area_code,
-            total_day_charge: payload.total_day_charge,
-            number_customer_service_calls: payload.number_customer_service_calls,
-            churn_probability: ml.churn_probability,
-            churn_probability_pct: ml.churn_probability_pct,
-            risk_tier: ml.risk_tier
-          });
         }
-
-        const outCsv = "account_length,area_code,total_day_charge,number_customer_service_calls,churn_probability,risk_tier\n" +
-          rows.map(r => `${r.account_length},${r.area_code},${r.total_day_charge},${r.number_customer_service_calls},${r.churn_probability},${r.risk_tier}`).join("\n");
-        renderBatchResults(rows, highCount, rows.length, outCsv);
-      };
-      reader.readAsText(file);
-    }
-
-    function renderBatchResults(previewRows, highRiskCount, totalRows, csvData) {
-      batchCsvExportData = csvData;
-      document.getElementById('batchResultsBox').style.display = 'block';
-      document.getElementById('batchSummaryTitle').textContent = `Scored ${totalRows} Records (${highRiskCount} High Risk)`;
-
-      const tbody = document.getElementById('batchTableBody');
-      tbody.innerHTML = '';
-      previewRows.slice(0, 25).forEach((row, i) => {
-        const tr = document.createElement('tr');
-        const prob = row.churn_probability;
-        const pClass = prob >= 0.65 ? 'pill-high' : prob >= 0.35 ? 'pill-med' : 'pill-low';
-        tr.innerHTML = `
-          <td>${i + 1}</td>
-          <td>${row.account_length || '-'} mo</td>
-          <td>${row.area_code || '-'}</td>
-          <td>$${parseFloat(row.total_day_charge || 0).toFixed(2)}</td>
-          <td>${row.number_customer_service_calls || 0}</td>
-          <td style="font-weight: 700;">${row.churn_probability_pct}</td>
-          <td><span class="pill-risk ${pClass}">${row.risk_tier}</span></td>
-        `;
-        tbody.appendChild(tr);
       });
-    }
 
-    function downloadBatchCSV() {
-      if (!batchCsvExportData) return;
-      const blob = new Blob([batchCsvExportData], { type: 'text/csv' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `scored_customers_${new Date().toISOString().slice(0,10)}.csv`;
-      a.click();
-    }
+      // 6. Chart 6: Area Code Churn (Bar)
+      new Chart(document.getElementById('chartAreaCodes').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: ['Area 408 (San Jose)', 'Area 415 (San Francisco)', 'Area 510 (Oakland)'],
+          datasets: [{
+            label: 'Churn Rate %',
+            data: [14.0, 13.6, 15.1],
+            backgroundColor: [
+              'rgba(59, 130, 246, 0.75)',
+              'rgba(139, 92, 246, 0.75)',
+              'rgba(6, 182, 212, 0.75)'
+            ],
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { display: false } },
+            y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' }, min: 0, max: 25 }
+          }
+        }
+      });
+    });
   </script>
 </body>
 </html>
