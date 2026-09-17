@@ -3,6 +3,7 @@ import time
 import datetime
 import numpy as np
 import pandas as pd
+from pathlib import Path
 from typing import Optional, Dict, Any, List
 from fastapi import FastAPI, UploadFile, File, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
@@ -13,6 +14,7 @@ from pydantic import BaseModel, Field
 from src.config import (
     FEATURE_NAMES,
     STATIC_DIR,
+    BASE_DIR,
     DEFAULT_CUSTOMER,
     DATA_RAW_DIR
 )
@@ -62,7 +64,7 @@ class CustomerInput(BaseModel):
 
 
 # ---------------------------------------------------------------------------
-# Health & Status Endpoints (Crucial for Keep-Alive pings on Render/Koyeb)
+# Health & Status Endpoints
 # ---------------------------------------------------------------------------
 @app.get("/health")
 def health_check():
@@ -176,81 +178,7 @@ def get_dataset_analytics():
 
 
 # ---------------------------------------------------------------------------
-# Prediction Endpoints
-# ---------------------------------------------------------------------------
-@app.post("/api/predict")
-def predict_single_customer(customer: CustomerInput):
-    """
-    Predicts churn probability, risk level, risk drivers, and retention actions for a single customer.
-    """
-    try:
-        data_dict = customer.dict()
-        result = predictor.predict_single(data_dict)
-        return {"success": True, "data": result}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-
-@app.post("/api/predict/batch")
-async def predict_batch_customers(file: UploadFile = File(...)):
-    """
-    Upload a CSV file of customers for bulk prediction.
-    Returns executive KPI metrics and scored records.
-    """
-    if not file.filename.endswith(".csv"):
-        raise HTTPException(status_code=400, detail="Invalid file type. Please upload a CSV file.")
-    
-    try:
-        content = await file.read()
-        df = pd.read_csv(io.BytesIO(content))
-        
-        if df.empty:
-            raise HTTPException(status_code=400, detail="Uploaded CSV is empty.")
-            
-        scored_df, summary = predictor.predict_batch(df)
-        preview_records = scored_df.head(100).to_dict(orient="records")
-        
-        csv_buffer = io.StringIO()
-        scored_df.to_csv(csv_buffer, index=False)
-        csv_string = csv_buffer.getvalue()
-        
-        return {
-            "success": True,
-            "filename": file.filename,
-            "summary": summary,
-            "preview": preview_records,
-            "total_rows": len(scored_df),
-            "csv_data": csv_string
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to process CSV file: {str(e)}")
-
-
-@app.get("/api/sample-csv")
-def download_sample_csv():
-    """
-    Provides a sample CSV dataset for rapid testing in the UI.
-    """
-    test_csv_path = DATA_RAW_DIR / "Data_Test.csv"
-    if test_csv_path.exists():
-        return FileResponse(
-            test_csv_path,
-            media_type="text/csv",
-            filename="sample_telecom_test_customers.csv"
-        )
-    else:
-        df_sample = pd.DataFrame([DEFAULT_CUSTOMER])
-        csv_buffer = io.StringIO()
-        df_sample.to_csv(csv_buffer, index=False)
-        return StreamingResponse(
-            io.BytesIO(csv_buffer.getvalue().encode()),
-            media_type="text/csv",
-            headers={"Content-Disposition": "attachment; filename=sample_customer.csv"}
-        )
-
-
-# ---------------------------------------------------------------------------
-# Static Web Dashboard Mount (Serves the UI seamlessly)
+# Static Web Dashboard Mount (Serves with no-cache headers)
 # ---------------------------------------------------------------------------
 if STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
@@ -258,11 +186,19 @@ if STATIC_DIR.exists():
 @app.get("/")
 def serve_dashboard():
     """
-    Serves the primary Glassmorphism interactive dashboard.
+    Serves the primary visual intelligence dashboard with anti-cache headers.
     """
-    index_file = STATIC_DIR / "index.html"
-    if index_file.exists():
-        return FileResponse(str(index_file))
+    candidates = [BASE_DIR / "index.html", STATIC_DIR / "index.html"]
+    for path in candidates:
+        if path.exists():
+            return FileResponse(
+                str(path),
+                headers={
+                    "Cache-Control": "no-cache, no-store, must-revalidate",
+                    "Pragma": "no-cache",
+                    "Expires": "0"
+                }
+            )
     return {
         "message": "Telecom Customer Churn AI API is online. Visit /docs for interactive Swagger API documentation."
     }
