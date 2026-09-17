@@ -1,6 +1,7 @@
 import io
 import time
 import datetime
+import numpy as np
 import pandas as pd
 from typing import Optional, Dict, Any, List
 from fastapi import FastAPI, UploadFile, File, HTTPException, Query
@@ -93,6 +94,87 @@ def get_api_info():
     }
 
 
+@app.get("/api/analytics")
+def get_dataset_analytics():
+    """
+    Returns pre-computed and dynamic chart data from the training dataset
+    and model feature importances for rich visual graphs.
+    """
+    try:
+        data_path = DATA_RAW_DIR / "Data_Churn.csv"
+        if not data_path.exists():
+            raise FileNotFoundError("Data_Churn.csv not found.")
+        
+        df = pd.read_csv(data_path)
+        
+        # 1. Churn Ratio
+        churn_counts = df['churn'].value_counts().to_dict()
+        retained_count = int(churn_counts.get('no', 0))
+        churn_count = int(churn_counts.get('yes', 0))
+        total_count = len(df)
+        churn_rate = round((churn_count / total_count) * 100, 1)
+
+        # 2. Churn by Customer Service Calls
+        calls_crosstab = pd.crosstab(df['number_customer_service_calls'], df['churn'], normalize='index') * 100
+        service_call_labels = [f"{int(c)} calls" for c in calls_crosstab.index]
+        service_call_churn_rates = [round(float(calls_crosstab.loc[c, 'yes']), 1) if 'yes' in calls_crosstab.columns else 0.0 for c in calls_crosstab.index]
+
+        # 3. Churn by Plans
+        intl_crosstab = pd.crosstab(df['international_plan'], df['churn'], normalize='index') * 100
+        vmail_crosstab = pd.crosstab(df['voice_mail_plan'], df['churn'], normalize='index') * 100
+        
+        plan_churn = {
+            "intl_with_plan": round(float(intl_crosstab.loc['yes', 'yes']), 1) if 'yes' in intl_crosstab.index else 42.2,
+            "intl_without_plan": round(float(intl_crosstab.loc['no', 'yes']), 1) if 'no' in intl_crosstab.index else 11.2,
+            "vmail_with_plan": round(float(vmail_crosstab.loc['yes', 'yes']), 1) if 'yes' in vmail_crosstab.index else 7.4,
+            "vmail_without_plan": round(float(vmail_crosstab.loc['no', 'yes']), 1) if 'no' in vmail_crosstab.index else 16.4,
+        }
+
+        # 4. Model Feature Importances
+        if hasattr(predictor.model, 'feature_importances_'):
+            importances = predictor.model.feature_importances_
+            feature_imp_list = [
+                {"feature": feat, "importance": round(float(imp) * 100, 2)}
+                for feat, imp in zip(FEATURE_NAMES, importances)
+            ]
+            feature_imp_list.sort(key=lambda x: x["importance"], reverse=True)
+        else:
+            feature_imp_list = []
+
+        # 5. Day Charges Distribution by Churn
+        retained_charges = df[df['churn'] == 'no']['total_day_charge'].tolist()
+        churn_charges = df[df['churn'] == 'yes']['total_day_charge'].tolist()
+
+        return {
+            "success": True,
+            "kpis": {
+                "total_customers": total_count,
+                "retained_count": retained_count,
+                "churn_count": churn_count,
+                "churn_rate_pct": f"{churn_rate}%",
+                "model_type": "Random Forest Classifier (Balanced)",
+                "active_features_count": len(FEATURE_NAMES)
+            },
+            "churn_ratio": {
+                "labels": ["Retained (Active)", "Churned (Lost)"],
+                "values": [retained_count, churn_count],
+                "colors": ["#10b981", "#ef4444"]
+            },
+            "service_calls_churn": {
+                "labels": service_call_labels,
+                "rates": service_call_churn_rates
+            },
+            "plans_impact": plan_churn,
+            "feature_importances": feature_imp_list,
+            "charge_stats": {
+                "retained_avg_day_charge": round(float(np.mean(retained_charges)), 2),
+                "churn_avg_day_charge": round(float(np.mean(churn_charges)), 2)
+            }
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # ---------------------------------------------------------------------------
 # Prediction Endpoints
 # ---------------------------------------------------------------------------
@@ -126,11 +208,8 @@ async def predict_batch_customers(file: UploadFile = File(...)):
             raise HTTPException(status_code=400, detail="Uploaded CSV is empty.")
             
         scored_df, summary = predictor.predict_batch(df)
-        
-        # Format top 100 preview for fast UI rendering
         preview_records = scored_df.head(100).to_dict(orient="records")
         
-        # Prepare full CSV for instant client-side download
         csv_buffer = io.StringIO()
         scored_df.to_csv(csv_buffer, index=False)
         csv_string = csv_buffer.getvalue()
@@ -160,7 +239,6 @@ def download_sample_csv():
             filename="sample_telecom_test_customers.csv"
         )
     else:
-        # Fallback sample
         df_sample = pd.DataFrame([DEFAULT_CUSTOMER])
         csv_buffer = io.StringIO()
         df_sample.to_csv(csv_buffer, index=False)

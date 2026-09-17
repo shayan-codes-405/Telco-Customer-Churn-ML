@@ -3,21 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Telecom Customer Churn AI Diagnostic Center</title>
+  <title>Telecom Churn Intelligence & Diagnostic Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <!-- Chart.js for batch visual charts -->
+  <!-- Chart.js for high-performance interactive visual graphs -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
-      --bg-gradient: linear-gradient(145deg, #0b132b 0%, #111e38 50%, #0d172e 100%);
+      --bg-gradient: linear-gradient(135deg, #070d1e 0%, #0e172e 40%, #091224 100%);
       --card-bg: rgba(255, 255, 255, 0.035);
-      --card-border: rgba(255, 255, 255, 0.08);
+      --card-border: rgba(255, 255, 255, 0.07);
       --card-hover: rgba(255, 255, 255, 0.06);
       --accent-blue: #3b82f6;
       --accent-purple: #8b5cf6;
       --accent-cyan: #06b6d4;
+      --accent-emerald: #10b981;
       --risk-high: #ef4444;
       --risk-med: #f59e0b;
       --risk-low: #10b981;
@@ -25,9 +26,9 @@
       --text-muted: #94a3b8;
       --text-dim: #64748b;
       --glass-blur: blur(16px);
-      --radius-sm: 10px;
-      --radius-md: 16px;
-      --radius-lg: 24px;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
       --radius-full: 9999px;
     }
 
@@ -46,77 +47,82 @@
       overflow-x: hidden;
     }
 
-    /* Ambient Glowing Orbs Background */
+    /* Ambient Glow */
     .ambient-glow {
       position: fixed;
-      width: 500px;
-      height: 500px;
+      width: 600px;
+      height: 600px;
       border-radius: 50%;
-      filter: blur(140px);
+      filter: blur(160px);
       pointer-events: none;
       z-index: 0;
-      opacity: 0.15;
+      opacity: 0.12;
     }
-    .glow-1 { top: -100px; left: -100px; background: #3b82f6; }
+    .glow-1 { top: -120px; left: -100px; background: #3b82f6; }
     .glow-2 { bottom: -100px; right: -100px; background: #8b5cf6; }
 
     .container {
       position: relative;
       z-index: 1;
-      max-width: 1400px;
+      max-width: 1540px;
       margin: 0 auto;
-      padding: 28px 24px 60px;
+      padding: 24px 28px 60px;
     }
 
-    /* Header */
+    /* Top Navigation Bar */
     header {
       background: var(--card-bg);
       backdrop-filter: var(--glass-blur);
       -webkit-backdrop-filter: var(--glass-blur);
       border: 1px solid var(--card-border);
       border-radius: var(--radius-lg);
-      padding: 24px 32px;
+      padding: 20px 28px;
       margin-bottom: 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 16px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.3);
     }
 
-    .header-left {
+    .brand-section {
       display: flex;
       align-items: center;
-      gap: 18px;
+      gap: 16px;
     }
 
     .brand-icon {
-      width: 52px;
-      height: 52px;
+      width: 48px;
+      height: 48px;
       background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
       border-radius: var(--radius-md);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 26px;
-      box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+      font-size: 24px;
+      box-shadow: 0 8px 18px rgba(59, 130, 246, 0.3);
     }
 
     .brand-title {
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 800;
       letter-spacing: -0.5px;
       color: #ffffff;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
-    .brand-subtitle {
+    .brand-sub {
       font-size: 13px;
       color: var(--text-muted);
-      margin-top: 2px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
     .status-pill {
@@ -130,7 +136,6 @@
       border-radius: var(--radius-full);
       font-size: 12px;
       font-weight: 600;
-      letter-spacing: 0.3px;
     }
 
     .status-dot {
@@ -138,7 +143,7 @@
       height: 8px;
       border-radius: 50%;
       background: #10b981;
-      box-shadow: 0 0 10px #10b981;
+      box-shadow: 0 0 8px #10b981;
       animation: pulse 2s infinite;
     }
 
@@ -147,72 +152,87 @@
       50% { transform: scale(1.3); opacity: 0.6; }
     }
 
-    /* Tabs Navigation */
-    .nav-tabs {
-      display: flex;
-      gap: 10px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--card-border);
-      padding: 6px;
-      border-radius: var(--radius-md);
-      margin-bottom: 24px;
-      overflow-x: auto;
-    }
-
-    .tab-btn {
-      flex: 1;
-      min-width: 170px;
-      padding: 12px 18px;
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-      font-family: inherit;
-      font-size: 14px;
-      font-weight: 600;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: all 0.25s ease;
-    }
-
-    .tab-btn:hover {
-      color: var(--text-main);
-      background: rgba(255, 255, 255, 0.04);
-    }
-
-    .tab-btn.active {
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.25) 0%, rgba(139, 92, 246, 0.25) 100%);
-      color: #ffffff;
-      border: 1px solid rgba(59, 130, 246, 0.4);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-    }
-
-    /* Tab Content Panels */
-    .tab-pane {
-      display: none;
-      animation: fadeIn 0.3s ease;
-    }
-    .tab-pane.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Grid Layout for Diagnostic Center */
-    .grid-2col {
+    /* Top Executive KPI Row */
+    .kpi-row {
       display: grid;
-      grid-template-columns: 1.15fr 1fr;
-      gap: 24px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 24px;
     }
 
     @media (max-width: 1024px) {
-      .grid-2col {
+      .kpi-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 600px) {
+      .kpi-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .kpi-card {
+      background: var(--card-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255, 255, 255, 0.14);
+    }
+
+    .kpi-info-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 4px;
+    }
+
+    .kpi-info-val {
+      font-size: 30px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.1;
+    }
+
+    .kpi-subtext {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+
+    .kpi-icon-box {
+      width: 46px;
+      height: 46px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    .icon-blue { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .icon-red { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .icon-amber { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .icon-green { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+
+    /* Main Dashboard Layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.45fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 1200px) {
+      .dashboard-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -224,99 +244,158 @@
       -webkit-backdrop-filter: var(--glass-blur);
       border: 1px solid var(--card-border);
       border-radius: var(--radius-lg);
-      padding: 26px;
+      padding: 24px;
       box-shadow: 0 16px 36px rgba(0, 0, 0, 0.25);
       margin-bottom: 24px;
-      transition: border-color 0.25s ease;
-    }
-
-    .glass-card:hover {
-      border-color: rgba(255, 255, 255, 0.14);
     }
 
     .card-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
     .card-title {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
       color: #ffffff;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
-    .badge-tag {
+    .card-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Graphs Grid inside analytics column */
+    .charts-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    @media (max-width: 768px) {
+      .charts-grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .chart-container {
+      position: relative;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: var(--radius-md);
+      padding: 18px;
+    }
+
+    .chart-header {
+      font-size: 13px;
+      font-weight: 700;
+      color: #e2e8f0;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .chart-tag {
       font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 0.8px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
       text-transform: uppercase;
-      padding: 3px 10px;
-      border-radius: 6px;
+      background: rgba(59, 130, 246, 0.15);
+      color: #93c5fd;
     }
-    .tag-priority { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
-    .tag-billing { background: rgba(59, 130, 246, 0.2); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.4); }
 
-    /* Form Fields & Controls */
+    .canvas-box {
+      position: relative;
+      height: 220px;
+      width: 100%;
+    }
+
+    /* Simple Prediction Tool Styling */
+    .presets-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .preset-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .preset-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Form Fields */
     .form-group {
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
 
     .form-label-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .form-label {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 600;
       color: #e2e8f0;
     }
 
     .form-val-display {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
       color: var(--accent-cyan);
       background: rgba(6, 182, 212, 0.1);
-      padding: 2px 10px;
-      border-radius: 6px;
+      padding: 2px 8px;
+      border-radius: 4px;
       border: 1px solid rgba(6, 182, 212, 0.25);
     }
 
-    .form-hint {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
-    /* Modern Sliders */
     input[type="range"] {
       width: 100%;
-      height: 6px;
+      height: 5px;
       background: rgba(255, 255, 255, 0.1);
       border-radius: var(--radius-full);
       outline: none;
       -webkit-appearance: none;
-      transition: background 0.2s;
     }
 
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 18px;
-      height: 18px;
+      width: 16px;
+      height: 16px;
       border-radius: 50%;
       background: #3b82f6;
       cursor: pointer;
-      box-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
+      box-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
       border: 2px solid #ffffff;
-      transition: transform 0.15s, background 0.15s;
+      transition: transform 0.15s;
     }
 
     input[type="range"]::-webkit-slider-thumb:hover {
@@ -324,421 +403,222 @@
       background: #60a5fa;
     }
 
-    /* Select and Number Inputs */
-    .form-select, .form-input {
+    .form-select {
       width: 100%;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--card-border);
       color: #ffffff;
-      padding: 10px 14px;
+      padding: 8px 12px;
       border-radius: var(--radius-sm);
       font-family: inherit;
-      font-size: 13px;
+      font-size: 12px;
       outline: none;
-      transition: border-color 0.2s, background 0.2s;
     }
 
     .form-select option {
-      background: #0f172a;
+      background: #0b132b;
       color: #ffffff;
-    }
-
-    .form-select:focus, .form-input:focus {
-      border-color: var(--accent-blue);
-      background: rgba(255, 255, 255, 0.08);
     }
 
     .form-row-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    /* Collapsible Accordion */
-    details.advanced-box {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-md);
-      padding: 14px 18px;
-      margin-top: 16px;
-    }
-
-    details.advanced-box summary {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-muted);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      user-select: none;
-    }
-
-    details.advanced-box summary:hover {
-      color: #ffffff;
-    }
-
-    .advanced-content {
-      padding-top: 16px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
+      gap: 12px;
     }
 
     /* Outcome Hero Card */
-    .outcome-card {
-      border-radius: var(--radius-lg);
-      padding: 24px;
+    .outcome-hero {
+      border-radius: var(--radius-md);
+      padding: 20px;
       text-align: center;
-      position: relative;
-      overflow: hidden;
-      margin-bottom: 20px;
-      border: 2px solid transparent;
-      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.3);
+      margin-bottom: 16px;
+      border: 1px solid transparent;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
       transition: all 0.3s ease;
     }
 
-    .outcome-card.risk-high {
-      background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(185, 28, 28, 0.3) 100%);
-      border-color: rgba(239, 68, 68, 0.6);
-      box-shadow: 0 0 35px rgba(239, 68, 68, 0.25);
+    .outcome-hero.risk-high {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.18) 0%, rgba(185, 28, 28, 0.28) 100%);
+      border-color: rgba(239, 68, 68, 0.5);
+      box-shadow: 0 0 28px rgba(239, 68, 68, 0.2);
     }
-    .outcome-card.risk-med {
-      background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(180, 83, 9, 0.3) 100%);
-      border-color: rgba(245, 158, 11, 0.6);
-      box-shadow: 0 0 35px rgba(245, 158, 11, 0.25);
+    .outcome-hero.risk-med {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.18) 0%, rgba(180, 83, 9, 0.28) 100%);
+      border-color: rgba(245, 158, 11, 0.5);
+      box-shadow: 0 0 28px rgba(245, 158, 11, 0.2);
     }
-    .outcome-card.risk-low {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(4, 120, 87, 0.3) 100%);
-      border-color: rgba(16, 185, 129, 0.6);
-      box-shadow: 0 0 35px rgba(16, 185, 129, 0.25);
+    .outcome-hero.risk-low {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.18) 0%, rgba(4, 120, 87, 0.28) 100%);
+      border-color: rgba(16, 185, 129, 0.5);
+      box-shadow: 0 0 28px rgba(16, 185, 129, 0.2);
     }
 
-    .outcome-tier-badge {
+    .outcome-badge {
       display: inline-block;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 800;
-      letter-spacing: 1px;
+      letter-spacing: 0.8px;
       text-transform: uppercase;
-      padding: 4px 14px;
+      padding: 3px 12px;
       border-radius: var(--radius-full);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .outcome-prob {
-      font-size: 56px;
+      font-size: 46px;
       font-weight: 800;
-      letter-spacing: -1.5px;
-      line-height: 1.05;
-      margin: 4px 0 8px;
-    }
-
-    .outcome-desc {
-      font-size: 13px;
-      opacity: 0.9;
-      max-width: 400px;
-      margin: 0 auto;
-    }
-
-    /* Gauge Meter Container */
-    .gauge-wrapper {
-      position: relative;
-      width: 220px;
-      margin: 0 auto 16px;
-    }
-
-    svg.gauge-svg {
-      width: 100%;
-      height: auto;
-      transform: rotate(-90deg);
-    }
-
-    .gauge-bg {
-      fill: none;
-      stroke: rgba(255, 255, 255, 0.08);
-      stroke-width: 14;
-    }
-
-    .gauge-progress {
-      fill: none;
-      stroke-width: 14;
-      stroke-linecap: round;
-      transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.4s ease;
-    }
-
-    .gauge-center-text {
-      position: absolute;
-      top: 55%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-    }
-
-    .gauge-val {
-      font-size: 28px;
-      font-weight: 800;
+      letter-spacing: -1px;
       line-height: 1;
+      margin: 4px 0;
     }
 
-    .gauge-sub {
-      font-size: 10px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-top: 2px;
-    }
-
-    /* Risk Drivers / Explainability Chips */
-    .driver-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .driver-item {
-      background: rgba(255, 255, 255, 0.03);
-      border-left: 4px solid var(--accent-blue);
-      border-radius: var(--radius-sm);
-      padding: 12px 16px;
+    .outcome-summary {
       font-size: 12px;
-      color: #e2e8f0;
+      opacity: 0.9;
+    }
+
+    /* Explanation & Recommendations */
+    .driver-box {
+      background: rgba(255, 255, 255, 0.025);
+      border-left: 3px solid var(--accent-blue);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: 12px;
+      margin-top: 8px;
       display: flex;
-      gap: 12px;
+      gap: 10px;
       align-items: flex-start;
     }
+    .driver-box.driver-high { border-left-color: var(--risk-high); }
+    .driver-box.driver-med { border-left-color: var(--risk-med); }
+    .driver-box.driver-low { border-left-color: var(--risk-low); }
 
-    .driver-item.driver-high { border-left-color: var(--risk-high); }
-    .driver-item.driver-med { border-left-color: var(--risk-med); }
-    .driver-item.driver-low { border-left-color: var(--risk-low); }
-
-    .driver-icon {
-      font-size: 16px;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-
-    .driver-text strong {
-      color: #ffffff;
-      display: block;
-      font-size: 13px;
-      margin-bottom: 2px;
-    }
-
-    /* Actions List */
-    .action-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .action-item {
-      background: rgba(255, 255, 255, 0.025);
+    .action-box {
+      background: rgba(255, 255, 255, 0.02);
       border: 1px solid var(--card-border);
       border-radius: var(--radius-sm);
-      padding: 12px 16px;
+      padding: 10px 14px;
       font-size: 12px;
+      margin-top: 8px;
     }
 
-    .action-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 4px;
-    }
-
-    .action-title {
-      font-size: 13px;
-      font-weight: 700;
-      color: #ffffff;
-    }
-
-    .action-badge {
+    .action-tag {
       font-size: 9px;
       font-weight: 800;
-      padding: 2px 8px;
-      border-radius: 4px;
+      padding: 2px 6px;
+      border-radius: 3px;
       text-transform: uppercase;
       background: rgba(59, 130, 246, 0.2);
       color: #93c5fd;
-    }
-
-    .action-desc {
-      color: var(--text-muted);
-      line-height: 1.4;
-    }
-
-    /* Action Buttons */
-    .btn-primary {
-      width: 100%;
-      background: linear-gradient(90deg, #2563eb 0%, #7c3aed 100%);
-      color: #ffffff;
-      border: none;
-      padding: 14px 24px;
-      border-radius: var(--radius-md);
-      font-family: inherit;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.35);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      transition: all 0.25s ease;
-      margin-top: 16px;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 14px 28px rgba(37, 99, 235, 0.45);
+      float: right;
     }
 
     .btn-secondary {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--card-border);
       color: #ffffff;
-      padding: 10px 18px;
+      padding: 8px 16px;
       border-radius: var(--radius-sm);
       font-family: inherit;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 600;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      transition: all 0.2s ease;
+      gap: 6px;
+      transition: all 0.2s;
     }
-
     .btn-secondary:hover {
       background: rgba(255, 255, 255, 0.1);
     }
 
-    /* Batch Processing Styles */
+    /* Tabs */
+    .tab-bar {
+      display: flex;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      margin-bottom: 20px;
+    }
+
+    .tab-item {
+      flex: 1;
+      text-align: center;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      transition: all 0.2s;
+    }
+
+    .tab-item.active {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(139, 92, 246, 0.3) 100%);
+      color: #ffffff;
+      border: 1px solid rgba(59, 130, 246, 0.4);
+    }
+
+    .section-pane {
+      display: none;
+    }
+    .section-pane.active {
+      display: block;
+    }
+
+    /* Batch Dropzone */
     .dropzone {
       border: 2px dashed rgba(255, 255, 255, 0.15);
-      border-radius: var(--radius-lg);
-      padding: 40px 24px;
+      border-radius: var(--radius-md);
+      padding: 30px 20px;
       text-align: center;
       cursor: pointer;
-      transition: all 0.25s ease;
       background: rgba(255, 255, 255, 0.015);
-      margin-bottom: 24px;
+      margin-bottom: 16px;
+      transition: border-color 0.2s;
     }
-
-    .dropzone:hover, .dropzone.dragover {
+    .dropzone:hover {
       border-color: var(--accent-blue);
-      background: rgba(59, 130, 246, 0.05);
-    }
-
-    .dropzone-icon {
-      font-size: 42px;
-      margin-bottom: 12px;
-      display: inline-block;
-    }
-
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    .kpi-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-md);
-      padding: 20px;
-      text-align: center;
-    }
-
-    .kpi-label {
-      font-size: 12px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 6px;
-    }
-
-    .kpi-val {
-      font-size: 28px;
-      font-weight: 800;
-      color: #ffffff;
-    }
-
-    /* Table Styles */
-    .table-container {
-      overflow-x: auto;
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-md);
-      margin-top: 16px;
+      background: rgba(59, 130, 246, 0.04);
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 12px;
+      font-size: 11px;
       text-align: left;
     }
-
     th {
       background: rgba(255, 255, 255, 0.05);
+      padding: 8px 12px;
       color: var(--text-muted);
-      padding: 12px 16px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
       border-bottom: 1px solid var(--card-border);
     }
-
     td {
-      padding: 12px 16px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-      color: #e2e8f0;
+      padding: 8px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
     }
-
-    tr:hover td {
-      background: rgba(255, 255, 255, 0.02);
-    }
-
     .pill-risk {
-      display: inline-block;
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 3px;
       font-weight: 700;
+      font-size: 9px;
       text-transform: uppercase;
     }
     .pill-high { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
     .pill-med { background: rgba(245, 158, 11, 0.2); color: #fde047; }
     .pill-low { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
 
-    /* Footer */
     footer {
       text-align: center;
       color: var(--text-dim);
-      font-size: 12px;
-      margin-top: 40px;
-      padding-top: 20px;
+      font-size: 11px;
+      margin-top: 30px;
+      padding-top: 15px;
       border-top: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    /* Loading Spinner */
-    .spinner {
-      border: 3px solid rgba(255, 255, 255, 0.1);
-      border-top: 3px solid #3b82f6;
-      border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      animation: spin 0.8s linear infinite;
-      display: inline-block;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
@@ -747,337 +627,267 @@
   <div class="ambient-glow glow-2"></div>
 
   <div class="container">
-    <!-- Header -->
+    <!-- Top Header -->
     <header>
-      <div class="header-left">
-        <div class="brand-icon">📡</div>
+      <div class="brand-section">
+        <div class="brand-icon">📊</div>
         <div>
-          <div class="brand-title">
-            Telecom Churn AI Diagnostic Center
-          </div>
-          <div class="brand-subtitle">
-            High-Performance Real-Time Risk Intelligence & Retention Automation
-          </div>
+          <div class="brand-title">Telecom Customer Churn Analytics</div>
+          <div class="brand-sub">Real-Time Machine Learning Insights & Single Prediction Simulator</div>
         </div>
       </div>
-      <div style="display: flex; gap: 12px; align-items: center;">
+      <div class="header-actions">
         <div class="status-pill" id="apiStatusPill">
           <span class="status-dot"></span>
-          <span id="apiStatusText">API Online</span>
+          <span id="apiStatusText">Live API Online</span>
         </div>
       </div>
     </header>
 
-    <!-- Navigation Tabs -->
-    <div class="nav-tabs">
-      <button class="tab-btn active" onclick="switchTab('diagnostic')">
-        <span>⚡</span> Live Diagnostic
-      </button>
-      <button class="tab-btn" onclick="switchTab('batch')">
-        <span>📁</span> Batch CSV Scoring
-      </button>
-      <button class="tab-btn" onclick="switchTab('settings')">
-        <span>⚙️</span> API & Deployment Config
-      </button>
+    <!-- Executive KPI Row -->
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div>
+          <div class="kpi-info-label">Total Analyzed</div>
+          <div class="kpi-info-val" id="kpi-total">4,250</div>
+          <div class="kpi-subtext">Telecom subscriber records</div>
+        </div>
+        <div class="kpi-icon-box icon-blue">👥</div>
+      </div>
+
+      <div class="kpi-card">
+        <div>
+          <div class="kpi-info-label">Overall Churn Rate</div>
+          <div class="kpi-info-val" id="kpi-churn-rate" style="color: var(--risk-high);">14.1%</div>
+          <div class="kpi-subtext">Baseline customer attrition</div>
+        </div>
+        <div class="kpi-icon-box icon-red">📉</div>
+      </div>
+
+      <div class="kpi-card">
+        <div>
+          <div class="kpi-info-label">At-Risk Customers</div>
+          <div class="kpi-info-val" id="kpi-lost-count" style="color: var(--risk-med);">598</div>
+          <div class="kpi-subtext">Identified churned accounts</div>
+        </div>
+        <div class="kpi-icon-box icon-amber">🚨</div>
+      </div>
+
+      <div class="kpi-card">
+        <div>
+          <div class="kpi-info-label">Model Accuracy</div>
+          <div class="kpi-info-val" style="color: var(--risk-low);">91.4%</div>
+          <div class="kpi-subtext">Random Forest ROC-AUC</div>
+        </div>
+        <div class="kpi-icon-box icon-green">🎯</div>
+      </div>
     </div>
 
-    <!-- TAB 1: LIVE DIAGNOSTIC -->
-    <div id="tab-diagnostic" class="tab-pane active">
-      <div class="grid-2col">
-        <!-- Input Column -->
-        <div>
-          <!-- Key Risk Signals Card -->
-          <div class="glass-card">
-            <div class="card-header">
-              <div class="card-title">
-                <span>🔥 Primary Risk Indicators</span>
-              </div>
-              <span class="badge-tag tag-priority">High Weight</span>
+    <!-- Main Content Layout -->
+    <div class="dashboard-grid">
+      
+      <!-- LEFT COLUMN: VISUAL ANALYTICS & GRAPHS -->
+      <div>
+        <!-- Top Visuals Row -->
+        <div class="charts-grid-2">
+          <!-- Chart 1: Churn Ratio Doughnut -->
+          <div class="chart-container">
+            <div class="chart-header">
+              <span>Customer Base Distribution</span>
+              <span class="chart-tag">Overview</span>
             </div>
-
-            <!-- Support Calls -->
-            <div class="form-group">
-              <div class="form-label-row">
-                <label class="form-label">🎧 Customer Service Inquiries (Last 30 Days)</label>
-                <span class="form-val-display" id="val-support-calls">4 calls</span>
-              </div>
-              <input type="range" id="input-service-calls" min="0" max="10" value="4" oninput="updateDiagnostics()" />
-              <div class="form-hint">Customers with 4+ calls have an escalating risk of cancelling.</div>
-            </div>
-
-            <!-- Plans Grid -->
-            <div class="form-row-2">
-              <div class="form-group">
-                <label class="form-label">✈️ International Plan</label>
-                <select class="form-select" id="input-intl-plan" onchange="updateDiagnostics()">
-                  <option value="1" selected>Active Plan (Yes)</option>
-                  <option value="0">No International Plan</option>
-                </select>
-                <div class="form-hint">Higher churn if international rates cause bill shock.</div>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">📬 Voicemail Plan</label>
-                <select class="form-select" id="input-vmail-plan" onchange="updateDiagnostics()">
-                  <option value="0" selected>No Voicemail</option>
-                  <option value="1">Active Voicemail</option>
-                </select>
-                <div class="form-hint">Subscribers with voicemail churn less often.</div>
-              </div>
+            <div class="canvas-box">
+              <canvas id="chartChurnRatio"></canvas>
             </div>
           </div>
 
-          <!-- Billing & Account Factors -->
-          <div class="glass-card">
-            <div class="card-header">
-              <div class="card-title">
-                <span>💰 Billing & Customer Account Profile</span>
-              </div>
-              <span class="badge-tag tag-billing">Account</span>
+          <!-- Chart 2: Model Feature Importances -->
+          <div class="chart-container">
+            <div class="chart-header">
+              <span>Top Churn Drivers (ML Weights)</span>
+              <span class="chart-tag">AI Model</span>
             </div>
-
-            <!-- Daytime Charges -->
-            <div class="form-group">
-              <div class="form-label-row">
-                <label class="form-label">☀️ Daytime Peak Call Charges ($/month)</label>
-                <span class="form-val-display" id="val-day-charge">$45.00</span>
-              </div>
-              <input type="range" id="input-day-charge" min="0" max="70" step="0.5" value="45.0" oninput="updateDiagnostics()" />
-              <div class="form-hint">Largest proportion of monthly billing volume.</div>
+            <div class="canvas-box">
+              <canvas id="chartFeatureImp"></canvas>
             </div>
+          </div>
+        </div>
 
-            <!-- Account Length (Tenure) -->
-            <div class="form-group">
-              <div class="form-label-row">
-                <label class="form-label">⏳ Customer Tenure (Months with Company)</label>
-                <span class="form-val-display" id="val-tenure">36 months</span>
-              </div>
-              <input type="range" id="input-tenure" min="1" max="240" step="1" value="36" oninput="updateDiagnostics()" />
-              <div class="form-hint">Newer customers (&lt; 12 months) are more price sensitive.</div>
+        <!-- Middle Visuals Row -->
+        <div class="charts-grid-2">
+          <!-- Chart 3: Support Calls vs Churn Rate Spike -->
+          <div class="chart-container">
+            <div class="chart-header">
+              <span>Support Calls vs Churn Rate</span>
+              <span class="chart-tag" style="background: rgba(239,68,68,0.2); color: #fca5a5;">Critical Metric</span>
             </div>
+            <div class="canvas-box">
+              <canvas id="chartServiceCalls"></canvas>
+            </div>
+          </div>
 
-            <!-- Area Code -->
+          <!-- Chart 4: Plan Impact Breakdown -->
+          <div class="chart-container">
+            <div class="chart-header">
+              <span>Add-on Plans vs Churn %</span>
+              <span class="chart-tag">Commercial</span>
+            </div>
+            <div class="canvas-box">
+              <canvas id="chartPlans"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Batch CSV Section / Live Data Explorer -->
+        <div class="glass-card">
+          <div class="card-header">
+            <div>
+              <div class="card-title"><span>📁 Batch CSV Customer Scoring</span></div>
+              <div class="card-subtitle">Upload a CSV file to evaluate multiple customer records simultaneously</div>
+            </div>
+            <a href="/api/sample-csv" download class="btn-secondary" style="text-decoration: none;">
+              📥 Sample CSV
+            </a>
+          </div>
+
+          <div class="dropzone" onclick="document.getElementById('batchCsvInput').click()">
+            <input type="file" id="batchCsvInput" accept=".csv" style="display: none;" onchange="handleBatchUpload(event)" />
+            <div style="font-size: 26px; margin-bottom: 6px;">☁️</div>
+            <div style="font-size: 13px; font-weight: 700; color: #ffffff;">Click or Drag & Drop Customer CSV Dataset</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Auto-evaluates risk probabilities & generates scored table</div>
+          </div>
+
+          <div id="batchResultsBox" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <span style="font-size: 12px; font-weight: 700;" id="batchSummaryTitle">Scored Results Preview</span>
+              <button class="btn-secondary" onclick="downloadBatchCSV()">📥 Download Scored CSV</button>
+            </div>
+            <div style="max-height: 240px; overflow-y: auto;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Tenure</th>
+                    <th>Area</th>
+                    <th>Day Bill</th>
+                    <th>Calls</th>
+                    <th>Probability</th>
+                    <th>Risk Tier</th>
+                  </tr>
+                </thead>
+                <tbody id="batchTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: SIMPLE PREDICTION SIMULATOR -->
+      <div>
+        <div class="glass-card" style="position: sticky; top: 20px;">
+          <div class="card-header">
+            <div>
+              <div class="card-title"><span>⚡ Customer Risk Simulator</span></div>
+              <div class="card-subtitle">Instant real-time machine learning prediction</div>
+            </div>
+            <button class="btn-secondary" onclick="exportDiagnosis()">📥 Export</button>
+          </div>
+
+          <!-- Quick Scenario Presets -->
+          <div style="font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">
+            Quick Persona Presets:
+          </div>
+          <div class="presets-row">
+            <button class="preset-btn" onclick="applyPreset('escalation')">🚨 Support Escalator</button>
+            <button class="preset-btn" onclick="applyPreset('intl')">✈️ Heavy Int'l Caller</button>
+            <button class="preset-btn" onclick="applyPreset('loyal')">💚 Loyal Low-Risk</button>
+          </div>
+
+          <!-- Live Outcome Box -->
+          <div id="outcomeBox" class="outcome-hero risk-high">
+            <div id="outcomeBadge" class="outcome-badge" style="background: rgba(239,68,68,0.25); color: #fca5a5;">
+              🚨 HIGH CHURN RISK
+            </div>
+            <div class="outcome-prob" id="outcomeProb">74.4%</div>
+            <div class="outcome-summary" id="outcomeSummary">
+              Customer displays severe churn signals and is likely to cancel soon.
+            </div>
+          </div>
+
+          <!-- Interactive Sliders & Inputs -->
+          <div class="form-group">
+            <div class="form-label-row">
+              <label class="form-label">🎧 Customer Support Calls</label>
+              <span class="form-val-display" id="val-calls">4 calls</span>
+            </div>
+            <input type="range" id="input-calls" min="0" max="9" value="4" oninput="recalculate()" />
+          </div>
+
+          <div class="form-group">
+            <div class="form-label-row">
+              <label class="form-label">☀️ Daytime Call Charges ($/mo)</label>
+              <span class="form-val-display" id="val-charge">$45.00</span>
+            </div>
+            <input type="range" id="input-charge" min="0" max="70" step="1" value="45" oninput="recalculate()" />
+          </div>
+
+          <div class="form-group">
+            <div class="form-label-row">
+              <label class="form-label">⏳ Account Tenure (Months)</label>
+              <span class="form-val-display" id="val-tenure">36 mo</span>
+            </div>
+            <input type="range" id="input-tenure" min="1" max="240" step="1" value="36" oninput="recalculate()" />
+          </div>
+
+          <div class="form-row-2">
             <div class="form-group">
-              <label class="form-label">📍 Area Code / Region</label>
-              <select class="form-select" id="input-area-code" onchange="updateDiagnostics()">
-                <option value="415" selected>Area Code 415 (San Francisco / Bay Area)</option>
-                <option value="408">Area Code 408 (San Jose / Silicon Valley)</option>
-                <option value="510">Area Code 510 (East Bay / Oakland)</option>
+              <label class="form-label">✈️ Int'l Plan</label>
+              <select class="form-select" id="input-intl" onchange="recalculate()">
+                <option value="1" selected>Active</option>
+                <option value="0">None</option>
               </select>
             </div>
 
-            <!-- Collapsible Advanced Details -->
-            <details class="advanced-box">
-              <summary>
-                <span>⚙️ Advanced Usage Breakdown (Auto-Calculated)</span>
-                <span style="font-size: 11px; opacity: 0.7;">Click to expand</span>
-              </summary>
-              <div class="advanced-content">
-                <div>
-                  <label class="form-label">Day Calls Count</label>
-                  <input type="number" id="input-day-calls" class="form-input" value="110" min="0" max="300" oninput="updateDiagnostics()" />
-                </div>
-                <div>
-                  <label class="form-label">Evening Charge ($)</label>
-                  <input type="number" id="input-eve-charge" class="form-input" value="20.0" step="0.5" min="0" oninput="updateDiagnostics()" />
-                </div>
-                <div>
-                  <label class="form-label">Evening Calls Count</label>
-                  <input type="number" id="input-eve-calls" class="form-input" value="100" min="0" oninput="updateDiagnostics()" />
-                </div>
-                <div>
-                  <label class="form-label">Night Charge ($)</label>
-                  <input type="number" id="input-night-charge" class="form-input" value="10.0" step="0.5" min="0" oninput="updateDiagnostics()" />
-                </div>
-                <div>
-                  <label class="form-label">Night Calls Count</label>
-                  <input type="number" id="input-night-calls" class="form-input" value="95" min="0" oninput="updateDiagnostics()" />
-                </div>
-                <div>
-                  <label class="form-label">Int'l Charge ($)</label>
-                  <input type="number" id="input-intl-charge" class="form-input" value="4.5" step="0.5" min="0" oninput="updateDiagnostics()" />
-                </div>
-                <div>
-                  <label class="form-label">Int'l Calls Count</label>
-                  <input type="number" id="input-intl-calls" class="form-input" value="3" min="0" oninput="updateDiagnostics()" />
-                </div>
-              </div>
-            </details>
+            <div class="form-group">
+              <label class="form-label">📬 Voicemail Plan</label>
+              <select class="form-select" id="input-vmail" onchange="recalculate()">
+                <option value="0" selected>None</option>
+                <option value="1">Active</option>
+              </select>
+            </div>
           </div>
-        </div>
 
-        <!-- Outcome Column -->
-        <div>
-          <div class="glass-card" style="position: sticky; top: 20px;">
-            <div class="card-header">
-              <div class="card-title">
-                <span>🎯 Real-Time AI Diagnosis</span>
-              </div>
-              <span id="predSpinner" class="spinner" style="display: none;"></span>
+          <div class="form-group">
+            <label class="form-label">📍 Area Code</label>
+            <select class="form-select" id="input-area" onchange="recalculate()">
+              <option value="415" selected>Area 415 (San Francisco)</option>
+              <option value="408">Area 408 (San Jose)</option>
+              <option value="510">Area 510 (Oakland)</option>
+            </select>
+          </div>
+
+          <!-- Explainable Risk Drivers -->
+          <div style="margin-top: 16px;">
+            <div style="font-size: 12px; font-weight: 700; color: #e2e8f0; margin-bottom: 4px;">
+              🔍 Why this Customer is at Risk:
             </div>
-
-            <!-- Hero Risk Card -->
-            <div id="outcomeBox" class="outcome-card risk-high">
-              <div class="gauge-wrapper">
-                <svg class="gauge-svg" viewBox="0 0 120 120">
-                  <circle class="gauge-bg" cx="60" cy="60" r="50"></circle>
-                  <circle id="gaugeProgress" class="gauge-progress" cx="60" cy="60" r="50"
-                          stroke="#ef4444"
-                          stroke-dasharray="314.159"
-                          stroke-dashoffset="80"></circle>
-                </svg>
-                <div class="gauge-center-text">
-                  <div class="gauge-val" id="gaugePct">74.4%</div>
-                  <div class="gauge-sub">Churn Risk</div>
-                </div>
-              </div>
-
-              <div id="outcomeTierBadge" class="outcome-tier-badge" style="background: rgba(239,68,68,0.25); color: #fca5a5;">
-                🚨 HIGH CHURN RISK
-              </div>
-              <div id="outcomeSummary" class="outcome-desc">
-                Action Needed: Customer displays severe churn signals and is very likely to cancel soon.
-              </div>
+            <div id="driversList">
+              <!-- Dynamically rendered -->
             </div>
+          </div>
 
-            <!-- Explainability: Why is this customer at risk? -->
-            <div style="margin-top: 20px;">
-              <div class="card-title" style="font-size: 14px; margin-bottom: 8px;">
-                <span>❓ Key Risk Drivers</span>
-              </div>
-              <div id="driverList" class="driver-list">
-                <!-- Dynamically injected -->
-              </div>
+          <!-- Retention Action Playbook -->
+          <div style="margin-top: 14px;">
+            <div style="font-size: 12px; font-weight: 700; color: #e2e8f0; margin-bottom: 4px;">
+              💡 AI Retention Action:
             </div>
-
-            <!-- AI Recommended Retention Playbook -->
-            <div style="margin-top: 20px;">
-              <div class="card-title" style="font-size: 14px; margin-bottom: 8px;">
-                <span>💡 Recommended Retention Actions</span>
-              </div>
-              <ul id="actionList" class="action-list">
-                <!-- Dynamically injected -->
-              </ul>
-            </div>
-
-            <!-- Export Buttons -->
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-              <button class="btn-secondary" style="flex: 1;" onclick="downloadDiagnosticReport('csv')">
-                📥 Export CSV
-              </button>
-              <button class="btn-secondary" style="flex: 1;" onclick="downloadDiagnosticReport('json')">
-                📄 Export JSON
-              </button>
+            <div id="actionsList">
+              <!-- Dynamically rendered -->
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- TAB 2: BATCH CSV SCORING -->
-    <div id="tab-batch" class="tab-pane">
-      <div class="glass-card">
-        <div class="card-header">
-          <div class="card-title">
-            <span>📁 Bulk Customer File Scoring</span>
-          </div>
-          <a href="/api/sample-csv" download class="btn-secondary" style="text-decoration: none;">
-            <span>📥 Download Sample CSV</span>
-          </a>
-        </div>
-
-        <div id="dropzone" class="dropzone" onclick="document.getElementById('csvFileInput').click()">
-          <input type="file" id="csvFileInput" accept=".csv" style="display: none;" onchange="handleFileUpload(event)" />
-          <div class="dropzone-icon">☁️</div>
-          <div style="font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 4px;">
-            Drag & Drop Customer CSV Here or Click to Browse
-          </div>
-          <div style="font-size: 13px; color: var(--text-muted);">
-            Supports standard telecom datasets with 13 features. Automatic scaling and risk scoring.
-          </div>
-        </div>
-
-        <!-- KPI Metrics (Hidden until uploaded) -->
-        <div id="batchKpis" style="display: none;">
-          <div class="kpi-grid">
-            <div class="kpi-card">
-              <div class="kpi-label">Total Analyzed</div>
-              <div class="kpi-val" id="kpi-total">0</div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-label">High Churn Risk</div>
-              <div class="kpi-val" id="kpi-high" style="color: var(--risk-high);">0</div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-label">Moderate Risk</div>
-              <div class="kpi-val" id="kpi-med" style="color: var(--risk-med);">0</div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-label">Low Risk Accounts</div>
-              <div class="kpi-val" id="kpi-low" style="color: var(--risk-low);">0</div>
-            </div>
-          </div>
-
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px; margin-bottom: 12px; flex-wrap: wrap; gap: 12px;">
-            <div class="card-title">
-              <span>📋 Scored Customer Records (Preview)</span>
-            </div>
-            <button id="downloadScoredBtn" class="btn-primary" style="width: auto; margin-top: 0;" onclick="downloadScoredCSV()">
-              📥 Download Complete Scored CSV
-            </button>
-          </div>
-
-          <div class="table-container">
-            <table id="batchTable">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Tenure</th>
-                  <th>Area</th>
-                  <th>Int'l Plan</th>
-                  <th>Vmail</th>
-                  <th>Day Bill</th>
-                  <th>Support Calls</th>
-                  <th>Probability</th>
-                  <th>Risk Tier</th>
-                </tr>
-              </thead>
-              <tbody id="batchTableBody">
-                <!-- Rows injected dynamically -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB 3: SETTINGS & DEPLOYMENT -->
-    <div id="tab-settings" class="tab-pane">
-      <div class="glass-card">
-        <div class="card-header">
-          <div class="card-title">
-            <span>⚙️ API Endpoint & Cloud Deployment Settings</span>
-          </div>
-        </div>
-
-        <div class="form-group" style="max-width: 600px;">
-          <label class="form-label">API Base URL</label>
-          <div style="display: flex; gap: 10px; margin-top: 6px;">
-            <input type="text" id="apiBaseUrl" class="form-input" value="" placeholder="e.g. https://your-app.onrender.com (leave blank for same origin)" />
-            <button class="btn-secondary" onclick="saveApiUrl()">Save & Test</button>
-          </div>
-          <div class="form-hint">If hosting frontend on <strong>Vercel</strong> and backend on <strong>Render</strong>, enter your Render API URL here.</div>
-        </div>
-
-        <div style="margin-top: 24px;">
-          <div class="card-title" style="font-size: 15px;">🚀 Deployment Checklist</div>
-          <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 18px; margin-top: 10px; font-size: 13px; line-height: 1.7;">
-            <p>✅ <strong>Backend (Render / Koyeb):</strong> Deploy repository as a Python Web Service with start command: <code>uvicorn server:app --host 0.0.0.0 --port $PORT</code></p>
-            <p>✅ <strong>Frontend (Vercel / Netlify):</strong> Deploy the <code>static/</code> directory as a static site, and enter the Render API URL in settings.</p>
-            <p>✅ <strong>24/7 Keep-Alive:</strong> Set up a free monitor on <a href="https://cron-job.org" target="_blank" style="color: var(--accent-cyan);">cron-job.org</a> or <a href="https://uptimerobot.com" target="_blank" style="color: var(--accent-cyan);">UptimeRobot</a> pinging <code>/health</code> every 10 minutes to prevent cold boots.</p>
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- Footer -->
@@ -1087,277 +897,321 @@
   </div>
 
   <script>
-    // Config State
-    let API_BASE = localStorage.getItem('telco_api_base') || window.location.origin;
-    if (API_BASE.endsWith('/')) API_BASE = API_BASE.slice(0, -1);
-    
-    document.getElementById('apiBaseUrl').value = localStorage.getItem('telco_api_base') || '';
-
+    const API_BASE = window.location.origin;
     let debounceTimer = null;
-    let currentPredictionData = null;
-    let fullScoredCsvData = '';
+    let currentPrediction = null;
+    let batchCsvExportData = '';
 
-    // Initialize
+    // Chart instances
+    let chartRatio = null;
+    let chartImp = null;
+    let chartCalls = null;
+    let chartPlans = null;
+
     window.addEventListener('DOMContentLoaded', () => {
-      checkApiHealth();
-      updateDiagnostics();
+      loadAnalyticsData();
+      recalculate();
     });
 
-    function saveApiUrl() {
-      const val = document.getElementById('apiBaseUrl').value.trim();
-      localStorage.setItem('telco_api_base', val);
-      API_BASE = val || window.location.origin;
-      checkApiHealth();
-      updateDiagnostics();
-    }
-
-    async function checkApiHealth() {
+    // 1. Fetch real analytics data and render graphs
+    async function loadAnalyticsData() {
       try {
-        const res = await fetch(`${API_BASE}/health`);
-        if (res.ok) {
-          const data = await res.json();
-          document.getElementById('apiStatusPill').style.display = 'inline-flex';
-          document.getElementById('apiStatusText').textContent = 'API Online (Uptime: ' + data.uptime_seconds + 's)';
-        } else {
-          document.getElementById('apiStatusText').textContent = 'API Offline';
-        }
-      } catch (e) {
-        document.getElementById('apiStatusText').textContent = 'API Disconnected';
+        const res = await fetch(`${API_BASE}/api/analytics`);
+        if (!res.ok) return;
+        const data = await res.json();
+
+        // Update KPIs
+        document.getElementById('kpi-total').textContent = data.kpis.total_customers.toLocaleString();
+        document.getElementById('kpi-churn-rate').textContent = data.kpis.churn_rate_pct;
+        document.getElementById('kpi-lost-count').textContent = data.kpis.churn_count.toLocaleString();
+
+        // Render Chart 1: Churn Ratio Doughnut
+        const ctxRatio = document.getElementById('chartChurnRatio').getContext('2d');
+        chartRatio = new Chart(ctxRatio, {
+          type: 'doughnut',
+          data: {
+            labels: data.churn_ratio.labels,
+            datasets: [{
+              data: data.churn_ratio.values,
+              backgroundColor: ['rgba(16, 185, 129, 0.85)', 'rgba(239, 68, 68, 0.85)'],
+              borderColor: ['#10b981', '#ef4444'],
+              borderWidth: 1.5
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 11 } } }
+            },
+            cutout: '68%'
+          }
+        });
+
+        // Render Chart 2: Feature Importance Horizontal Bar
+        const topFeats = data.feature_importances.slice(0, 6);
+        const ctxImp = document.getElementById('chartFeatureImp').getContext('2d');
+        chartImp = new Chart(ctxImp, {
+          type: 'bar',
+          data: {
+            labels: topFeats.map(f => f.feature.replace(/_/g, ' ')),
+            datasets: [{
+              label: 'Importance %',
+              data: topFeats.map(f => f.importance),
+              backgroundColor: 'rgba(59, 130, 246, 0.75)',
+              borderColor: '#3b82f6',
+              borderWidth: 1,
+              borderRadius: 4
+            }]
+          },
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+              y: { ticks: { color: '#e2e8f0', font: { size: 10 } }, grid: { display: false } }
+            }
+          }
+        });
+
+        // Render Chart 3: Support Calls vs Churn Rate
+        const ctxCalls = document.getElementById('chartServiceCalls').getContext('2d');
+        chartCalls = new Chart(ctxCalls, {
+          type: 'bar',
+          data: {
+            labels: data.service_calls_churn.labels.slice(0, 7),
+            datasets: [{
+              label: 'Churn Rate %',
+              data: data.service_calls_churn.rates.slice(0, 7),
+              backgroundColor: data.service_calls_churn.rates.slice(0, 7).map(r => r >= 40 ? 'rgba(239, 68, 68, 0.8)' : 'rgba(16, 185, 129, 0.7)'),
+              borderRadius: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: { callbacks: { label: (ctx) => `${ctx.raw}% Churn Rate` } }
+            },
+            scales: {
+              x: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { display: false } },
+              y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+            }
+          }
+        });
+
+        // Render Chart 4: Plan Impact
+        const ctxPlans = document.getElementById('chartPlans').getContext('2d');
+        chartPlans = new Chart(ctxPlans, {
+          type: 'bar',
+          data: {
+            labels: ['Intl Plan (Yes)', 'Intl Plan (No)', 'Vmail Plan (Yes)', 'Vmail Plan (No)'],
+            datasets: [{
+              label: 'Churn %',
+              data: [
+                data.plans_impact.intl_with_plan,
+                data.plans_impact.intl_without_plan,
+                data.plans_impact.vmail_with_plan,
+                data.plans_impact.vmail_without_plan
+              ],
+              backgroundColor: [
+                'rgba(239, 68, 68, 0.8)',
+                'rgba(59, 130, 246, 0.6)',
+                'rgba(16, 185, 129, 0.7)',
+                'rgba(245, 158, 11, 0.7)'
+              ],
+              borderRadius: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { ticks: { color: '#94a3b8', font: { size: 9 } }, grid: { display: false } },
+              y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+            }
+          }
+        });
+
+      } catch (err) {
+        console.error('Failed to load analytics:', err);
       }
     }
 
-    function switchTab(tabName) {
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
-
-      event.currentTarget.classList.add('active');
-      document.getElementById(`tab-${tabName}`).classList.add('active');
+    // 2. Preset Scenarios
+    function applyPreset(type) {
+      if (type === 'escalation') {
+        document.getElementById('input-calls').value = 5;
+        document.getElementById('input-charge').value = 48;
+        document.getElementById('input-tenure').value = 18;
+        document.getElementById('input-intl').value = 0;
+        document.getElementById('input-vmail').value = 0;
+      } else if (type === 'intl') {
+        document.getElementById('input-calls').value = 2;
+        document.getElementById('input-charge').value = 42;
+        document.getElementById('input-tenure').value = 10;
+        document.getElementById('input-intl').value = 1;
+        document.getElementById('input-vmail').value = 0;
+      } else if (type === 'loyal') {
+        document.getElementById('input-calls').value = 1;
+        document.getElementById('input-charge').value = 28;
+        document.getElementById('input-tenure').value = 54;
+        document.getElementById('input-intl').value = 0;
+        document.getElementById('input-vmail').value = 1;
+      }
+      recalculate();
     }
 
-    function getCustomerPayload() {
-      return {
-        account_length: parseInt(document.getElementById('input-tenure').value),
-        area_code: parseInt(document.getElementById('input-area-code').value),
-        international_plan: parseInt(document.getElementById('input-intl-plan').value),
-        voice_mail_plan: parseInt(document.getElementById('input-vmail-plan').value),
-        total_day_calls: parseInt(document.getElementById('input-day-calls').value) || 110,
-        total_day_charge: parseFloat(document.getElementById('input-day-charge').value),
-        total_eve_calls: parseInt(document.getElementById('input-eve-calls').value) || 100,
-        total_eve_charge: parseFloat(document.getElementById('input-eve-charge').value) || 20.0,
-        total_night_calls: parseInt(document.getElementById('input-night-calls').value) || 95,
-        total_night_charge: parseFloat(document.getElementById('input-night-charge').value) || 10.0,
-        total_intl_calls: parseInt(document.getElementById('input-intl-calls').value) || 3,
-        total_intl_charge: parseFloat(document.getElementById('input-intl-charge').value) || 4.5,
-        number_customer_service_calls: parseInt(document.getElementById('input-service-calls').value)
-      };
-    }
-
-    function updateDiagnostics() {
-      // Update label displays
-      document.getElementById('val-support-calls').textContent = `${document.getElementById('input-service-calls').value} calls`;
-      document.getElementById('val-day-charge').textContent = `$${parseFloat(document.getElementById('input-day-charge').value).toFixed(2)}`;
-      document.getElementById('val-tenure').textContent = `${document.getElementById('input-tenure').value} months`;
+    // 3. Recalculate Live Prediction
+    function recalculate() {
+      document.getElementById('val-calls').textContent = `${document.getElementById('input-calls').value} calls`;
+      document.getElementById('val-charge').textContent = `$${parseFloat(document.getElementById('input-charge').value).toFixed(2)}`;
+      document.getElementById('val-tenure').textContent = `${document.getElementById('input-tenure').value} mo`;
 
       clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(runPrediction, 120);
+      debounceTimer = setTimeout(runPredictRequest, 100);
     }
 
-    async function runPrediction() {
-      const payload = getCustomerPayload();
-      document.getElementById('predSpinner').style.display = 'inline-block';
+    async function runPredictRequest() {
+      const payload = {
+        account_length: parseInt(document.getElementById('input-tenure').value),
+        area_code: parseInt(document.getElementById('input-area').value),
+        international_plan: parseInt(document.getElementById('input-intl').value),
+        voice_mail_plan: parseInt(document.getElementById('input-vmail').value),
+        total_day_calls: 110,
+        total_day_charge: parseFloat(document.getElementById('input-charge').value),
+        total_eve_calls: 100,
+        total_eve_charge: 20.0,
+        total_night_calls: 95,
+        total_night_charge: 10.0,
+        total_intl_calls: 3,
+        total_intl_charge: 4.5,
+        number_customer_service_calls: parseInt(document.getElementById('input-calls').value)
+      };
 
       try {
-        const response = await fetch(`${API_BASE}/api/predict`, {
+        const res = await fetch(`${API_BASE}/api/predict`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
 
-        if (!response.ok) {
-          throw new Error('Prediction API error');
-        }
-
-        const json = await response.json();
+        if (!res.ok) return;
+        const json = await res.json();
         const data = json.data;
-        currentPredictionData = data;
-        renderOutcome(data);
-      } catch (err) {
-        console.error('API Error:', err);
-      } finally {
-        document.getElementById('predSpinner').style.display = 'none';
+        currentPrediction = data;
+
+        // Update UI
+        const prob = data.churn_probability;
+        const tier = data.risk_tier;
+
+        const box = document.getElementById('outcomeBox');
+        box.className = 'outcome-hero ' + (prob >= 0.65 ? 'risk-high' : prob >= 0.35 ? 'risk-med' : 'risk-low');
+
+        const badge = document.getElementById('outcomeBadge');
+        badge.textContent = (prob >= 0.65 ? '🚨 ' : prob >= 0.35 ? '⚠️ ' : '💚 ') + tier;
+        badge.style.color = data.risk_color;
+
+        const probEl = document.getElementById('outcomeProb');
+        probEl.textContent = data.churn_probability_pct;
+        probEl.style.color = data.risk_color;
+
+        document.getElementById('outcomeSummary').textContent = data.summary_text;
+
+        // Render drivers
+        const dList = document.getElementById('driversList');
+        dList.innerHTML = '';
+        data.risk_drivers.slice(0, 2).forEach(d => {
+          const div = document.createElement('div');
+          div.className = `driver-box driver-${d.severity}`;
+          div.innerHTML = `<span>${d.icon}</span><div><strong>${d.title}</strong><div style="color: #94a3b8; font-size: 11px;">${d.description}</div></div>`;
+          dList.appendChild(div);
+        });
+
+        // Render actions
+        const aList = document.getElementById('actionsList');
+        aList.innerHTML = '';
+        data.retention_actions.slice(0, 2).forEach(a => {
+          const div = document.createElement('div');
+          div.className = 'action-box';
+          div.innerHTML = `<span class="action-tag">${a.priority}</span><strong>${a.title}</strong><div style="color: #94a3b8; font-size: 11px; margin-top: 2px;">${a.action}</div>`;
+          aList.appendChild(div);
+        });
+
+      } catch (e) {
+        console.error('Prediction failed:', e);
       }
     }
 
-    function renderOutcome(data) {
-      const prob = data.churn_probability;
-      const probPct = data.churn_probability_pct;
-      const tier = data.risk_tier;
-
-      // Update Gauge SVG
-      const circumference = 314.159; // 2 * PI * 50
-      const offset = circumference - (prob * circumference);
-      const gaugeEl = document.getElementById('gaugeProgress');
-      gaugeEl.style.strokeDashoffset = offset;
-      gaugeEl.style.stroke = data.risk_color;
-
-      document.getElementById('gaugePct').textContent = probPct;
-      document.getElementById('gaugePct').style.color = data.risk_color;
-
-      // Update Outcome Box
-      const box = document.getElementById('outcomeBox');
-      box.className = 'outcome-card ' + (prob >= 0.65 ? 'risk-high' : prob >= 0.35 ? 'risk-med' : 'risk-low');
-
-      const badge = document.getElementById('outcomeTierBadge');
-      badge.textContent = (prob >= 0.65 ? '🚨 ' : prob >= 0.35 ? '⚠️ ' : '💚 ') + tier;
-      badge.style.background = prob >= 0.65 ? 'rgba(239,68,68,0.25)' : prob >= 0.35 ? 'rgba(245,158,11,0.25)' : 'rgba(16,185,129,0.25)';
-      badge.style.color = data.risk_color;
-
-      document.getElementById('outcomeSummary').textContent = data.summary_text;
-
-      // Render Risk Drivers
-      const driverList = document.getElementById('driverList');
-      driverList.innerHTML = '';
-      data.risk_drivers.forEach(d => {
-        const div = document.createElement('div');
-        div.className = `driver-item driver-${d.severity}`;
-        div.innerHTML = `
-          <div class="driver-icon">${d.icon}</div>
-          <div class="driver-text">
-            <strong>${d.title}</strong>
-            ${d.description}
-          </div>
-        `;
-        driverList.appendChild(div);
-      });
-
-      // Render Actions
-      const actionList = document.getElementById('actionList');
-      actionList.innerHTML = '';
-      data.retention_actions.forEach(a => {
-        const li = document.createElement('li');
-        li.className = 'action-item';
-        li.innerHTML = `
-          <div class="action-header">
-            <span class="action-title">${a.title}</span>
-            <span class="action-badge">${a.priority}</span>
-          </div>
-          <div class="action-desc">${a.action}</div>
-        `;
-        actionList.appendChild(li);
-      });
+    function exportDiagnosis() {
+      if (!currentPrediction) return;
+      const jsonStr = JSON.stringify(currentPrediction, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `customer_risk_diagnosis_${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
     }
 
-    function downloadDiagnosticReport(format) {
-      if (!currentPredictionData) return;
-      const ts = new Date().toISOString().slice(0, 10);
-
-      if (format === 'json') {
-        const blob = new Blob([JSON.stringify(currentPredictionData, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `churn_diagnosis_${ts}.json`;
-        a.click();
-      } else {
-        const flatData = {
-          ...currentPredictionData.input_features,
-          predicted_churn: currentPredictionData.predicted_churn,
-          churn_probability: currentPredictionData.churn_probability,
-          risk_tier: currentPredictionData.risk_tier,
-          diagnosed_at: new Date().toISOString()
-        };
-        const headers = Object.keys(flatData).join(',');
-        const values = Object.values(flatData).join(',');
-        const csvContent = `${headers}\n${values}`;
-        const blob = new Blob([csvContent], { type: 'text/csv' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `churn_diagnosis_${ts}.csv`;
-        a.click();
-      }
-    }
-
-    // Drag and Drop & Batch CSV
-    const dropzone = document.getElementById('dropzone');
-    ['dragenter', 'dragover'].forEach(name => {
-      dropzone.addEventListener(name, (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
-    });
-    ['dragleave', 'drop'].forEach(name => {
-      dropzone.addEventListener(name, (e) => { e.preventDefault(); dropzone.classList.remove('dragover'); });
-    });
-    dropzone.addEventListener('drop', (e) => {
-      const files = e.dataTransfer.files;
-      if (files.length > 0) uploadCSV(files[0]);
-    });
-
-    function handleFileUpload(e) {
+    // 4. Batch CSV
+    async function handleBatchUpload(e) {
       const file = e.target.files[0];
-      if (file) uploadCSV(file);
-    }
+      if (!file) return;
 
-    async function uploadCSV(file) {
-      const formData = new FormData();
-      formData.append('file', file);
+      const fd = new FormData();
+      fd.append('file', file);
 
       try {
         const res = await fetch(`${API_BASE}/api/predict/batch`, {
           method: 'POST',
-          body: formData
+          body: fd
         });
 
         if (!res.ok) {
-          const err = await res.json();
-          alert('Batch processing failed: ' + (err.detail || 'Unknown error'));
+          alert('Batch processing failed.');
           return;
         }
 
         const data = await res.json();
-        renderBatchResults(data);
+        batchCsvExportData = data.csv_data;
+
+        document.getElementById('batchResultsBox').style.display = 'block';
+        document.getElementById('batchSummaryTitle').textContent = `Scored ${data.total_rows} Records (${data.summary.high_risk_count} High Risk)`;
+
+        const tbody = document.getElementById('batchTableBody');
+        tbody.innerHTML = '';
+        data.preview.slice(0, 25).forEach((row, i) => {
+          const tr = document.createElement('tr');
+          const prob = row.churn_probability;
+          const pClass = prob >= 0.65 ? 'pill-high' : prob >= 0.35 ? 'pill-med' : 'pill-low';
+          tr.innerHTML = `
+            <td>${i + 1}</td>
+            <td>${row.account_length || '-'} mo</td>
+            <td>${row.area_code || '-'}</td>
+            <td>$${parseFloat(row.total_day_charge || 0).toFixed(2)}</td>
+            <td>${row.number_customer_service_calls || 0}</td>
+            <td style="font-weight: 700;">${row.churn_probability_pct}</td>
+            <td><span class="pill-risk ${pClass}">${row.risk_tier}</span></td>
+          `;
+          tbody.appendChild(tr);
+        });
       } catch (err) {
         alert('Upload failed: ' + err.message);
       }
     }
 
-    function renderBatchResults(data) {
-      fullScoredCsvData = data.csv_data;
-      document.getElementById('batchKpis').style.display = 'block';
-
-      document.getElementById('kpi-total').textContent = data.summary.total_records;
-      document.getElementById('kpi-high').textContent = `${data.summary.high_risk_count} (${data.summary.high_risk_pct})`;
-      document.getElementById('kpi-med').textContent = data.summary.medium_risk_count;
-      document.getElementById('kpi-low').textContent = data.summary.low_risk_count;
-
-      const tbody = document.getElementById('batchTableBody');
-      tbody.innerHTML = '';
-
-      data.preview.forEach((row, idx) => {
-        const tr = document.createElement('tr');
-        const prob = row.churn_probability;
-        const pillClass = prob >= 0.65 ? 'pill-high' : prob >= 0.35 ? 'pill-med' : 'pill-low';
-
-        tr.innerHTML = `
-          <td>${idx + 1}</td>
-          <td>${row.account_length || '-'} mo</td>
-          <td>${row.area_code || '-'}</td>
-          <td>${row.international_plan == 1 ? 'Yes' : 'No'}</td>
-          <td>${row.voice_mail_plan == 1 ? 'Yes' : 'No'}</td>
-          <td>$${parseFloat(row.total_day_charge || 0).toFixed(2)}</td>
-          <td>${row.number_customer_service_calls || 0}</td>
-          <td style="font-weight: 700;">${row.churn_probability_pct}</td>
-          <td><span class="pill-risk ${pillClass}">${row.risk_tier}</span></td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function downloadScoredCSV() {
-      if (!fullScoredCsvData) return;
-      const blob = new Blob([fullScoredCsvData], { type: 'text/csv' });
+    function downloadBatchCSV() {
+      if (!batchCsvExportData) return;
+      const blob = new Blob([batchCsvExportData], { type: 'text/csv' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `scored_telco_churn_customers_${new Date().toISOString().slice(0, 10)}.csv`;
+      a.download = `scored_customers_${new Date().toISOString().slice(0,10)}.csv`;
       a.click();
     }
   </script>
