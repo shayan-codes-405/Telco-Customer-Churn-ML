@@ -8,7 +8,7 @@
 
 Live demo: https://telco-churn-70pb.onrender.com/
 
-This project builds a telecom churn prediction system to identify customers at risk of leaving and highlight the main reasons behind attrition. It uses a Random Forest model trained on telecom usage and service behavior data to estimate churn probability, explain the biggest risk drivers, and recommend retention actions. A FastAPI backend serves predictions and analytics, while a Streamlit dashboard and static web UI allow users to explore churn insights, review model metrics, and score new customer records or batch CSV files.
+This project predicts telecom customer churn using a Random Forest model trained on usage, billing, plan, and support data. It identifies at-risk customers, explains the strongest churn drivers, and supports retention decisions. The app includes a FastAPI backend, a Streamlit dashboard, and a static web interface for live scoring and batch CSV analysis.
 
 ---
 
